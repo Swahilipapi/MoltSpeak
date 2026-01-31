@@ -1,0 +1,28 @@
+{
+  "v": "0.1",
+  "id": "42e8e0db-785d-42e1-806f-06d13614f803",
+  "ts": 1769860762803,
+  "op": "respond",
+  "cls": "int",
+  "from": {
+    "agent": "translate-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:translate_public_key_12345"
+  },
+  "to": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "re": "e6408e31-f734-4502-87a1-9856b3761b28",
+  "p": {
+    "status": "success",
+    "data": {
+      "source_text": "hello",
+      "translated_text": "bonjour",
+      "source_lang": "en",
+      "target_lang": "fr"
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJ0cmFuc2xhdGUtYWdlbnQiLCAib3JnIjogIm1vbHRz"
+}

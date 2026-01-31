@@ -1,0 +1,28 @@
+{
+  "v": "0.1",
+  "id": "cdf9b8ed-56d4-4179-9c58-9858f46b282d",
+  "ts": 1769860762803,
+  "op": "respond",
+  "cls": "int",
+  "from": {
+    "agent": "weather-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:weather_public_key_12345"
+  },
+  "to": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "re": "ad32d62c-4501-4518-9a00-53e4b11879f7",
+  "p": {
+    "status": "success",
+    "data": {
+      "location": "Tokyo",
+      "temperature": "22\u00b0C",
+      "conditions": "Partly cloudy",
+      "forecast": "Mild temperatures expected throughout the week"
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJ3ZWF0aGVyLWFnZW50IiwgIm9yZyI6ICJtb2x0c3Bl"
+}

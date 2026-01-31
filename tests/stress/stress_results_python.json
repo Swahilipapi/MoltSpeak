@@ -1,0 +1,113 @@
+{
+  "sdk": "python",
+  "timestamp": 1769861147684,
+  "summary": {
+    "passed": 3,
+    "total": 4,
+    "total_messages": 303,
+    "total_time_ms": 702.0645709708333
+  },
+  "tests": [
+    {
+      "name": "Message Volume Test",
+      "passed": true,
+      "duration_ms": 19.115714996587485,
+      "messages_created": 100,
+      "messages_signed": 100,
+      "messages_verified": 100,
+      "errors": [],
+      "metrics": {
+        "create_time_ms": 14.61,
+        "sign_time_ms": 4.46,
+        "verify_time_ms": 0.04,
+        "avg_create_ms": 0.1461,
+        "avg_sign_ms": 0.0446,
+        "avg_verify_ms": 0.0004,
+        "messages_per_second": 5231.3
+      }
+    },
+    {
+      "name": "Concurrent Agents Test",
+      "passed": true,
+      "duration_ms": 64.53976698685437,
+      "messages_created": 200,
+      "messages_signed": 200,
+      "messages_verified": 200,
+      "errors": [],
+      "metrics": {
+        "agent_count": 10,
+        "messages_per_agent": 20,
+        "expected_total": 200,
+        "actual_total": 200,
+        "unique_message_ids": 200,
+        "corruption_detected": false,
+        "throughput_msgs_per_sec": 3098.86
+      }
+    },
+    {
+      "name": "Large Payload Test",
+      "passed": true,
+      "duration_ms": 618.0487539968453,
+      "messages_created": 3,
+      "messages_signed": 3,
+      "messages_verified": 3,
+      "errors": [],
+      "metrics": {
+        "test_cases": [
+          {
+            "label": "5KB",
+            "target_bytes": 5120,
+            "actual_bytes": 5027,
+            "should_succeed": true,
+            "succeeded": true,
+            "verified": true,
+            "passed": true,
+            "time_ms": 37.9
+          },
+          {
+            "label": "10KB",
+            "target_bytes": 10240,
+            "actual_bytes": 10148,
+            "should_succeed": true,
+            "succeeded": true,
+            "verified": true,
+            "passed": true,
+            "time_ms": 173.29
+          },
+          {
+            "label": "15KB",
+            "target_bytes": 15360,
+            "actual_bytes": 15268,
+            "should_succeed": true,
+            "succeeded": true,
+            "verified": true,
+            "passed": true,
+            "time_ms": 395.89
+          },
+          {
+            "label": "1.1MB",
+            "target_bytes": 1126400,
+            "should_succeed": false,
+            "succeeded": false,
+            "error": "Message exceeds size limit: 1126613 bytes > 1048576 bytes",
+            "passed": true,
+            "time_ms": 10.88
+          }
+        ],
+        "size_limit_bytes": 1048576
+      }
+    },
+    {
+      "name": "Cross-SDK Message Generation (Python)",
+      "passed": false,
+      "duration_ms": 0.3603349905461073,
+      "messages_created": 0,
+      "messages_signed": 0,
+      "messages_verified": 0,
+      "errors": [
+        "Generation failed: Invalid message: PII detected without consent: phone. Set cls to 'pii' with consent metadata."
+      ],
+      "metrics": {}
+    }
+  ]
+}

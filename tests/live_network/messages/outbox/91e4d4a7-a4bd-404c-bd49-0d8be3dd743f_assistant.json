@@ -1,0 +1,26 @@
+{
+  "v": "0.1",
+  "id": "91e4d4a7-a4bd-404c-bd49-0d8be3dd743f",
+  "ts": 1769860762802,
+  "op": "query",
+  "cls": "int",
+  "from": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "to": {
+    "agent": "research-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:research_public_key_12345"
+  },
+  "p": {
+    "domain": "research",
+    "intent": "news",
+    "params": {
+      "topic": "AI",
+      "recency": "latest"
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJhc3Npc3RhbnQtYWdlbnQiLCAib3JnIjogIm1vbHRz"
+}

@@ -1,0 +1,35 @@
+{
+  "v": "0.1",
+  "id": "b240a6fd-c9ad-4bf9-a465-59162773e13c",
+  "ts": 1769860762804,
+  "op": "respond",
+  "cls": "int",
+  "from": {
+    "agent": "research-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:research_public_key_12345"
+  },
+  "to": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "re": "91e4d4a7-a4bd-404c-bd49-0d8be3dd743f",
+  "p": {
+    "status": "success",
+    "data": {
+      "topic": "AI",
+      "articles": [
+        {
+          "title": "GPT-5 Announced",
+          "source": "TechNews"
+        },
+        {
+          "title": "AI Regulation Updates",
+          "source": "PolicyWatch"
+        }
+      ]
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJyZXNlYXJjaC1hZ2VudCIsICJvcmciOiAibW9sdHNw"
+}

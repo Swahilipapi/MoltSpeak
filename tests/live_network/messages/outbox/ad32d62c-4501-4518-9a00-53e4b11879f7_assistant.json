@@ -1,0 +1,25 @@
+{
+  "v": "0.1",
+  "id": "ad32d62c-4501-4518-9a00-53e4b11879f7",
+  "ts": 1769860762798,
+  "op": "query",
+  "cls": "int",
+  "from": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "to": {
+    "agent": "weather-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:weather_public_key_12345"
+  },
+  "p": {
+    "domain": "weather",
+    "intent": "forecast",
+    "params": {
+      "location": "Tokyo"
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJhc3Npc3RhbnQtYWdlbnQiLCAib3JnIjogIm1vbHRz"
+}

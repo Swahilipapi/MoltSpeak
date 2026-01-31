@@ -1,0 +1,30 @@
+{
+  "v": "0.1",
+  "id": "e6408e31-f734-4502-87a1-9856b3761b28",
+  "ts": 1769860762801,
+  "op": "task",
+  "cls": "int",
+  "from": {
+    "agent": "assistant-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:assistant_public_key_12345"
+  },
+  "to": {
+    "agent": "translate-agent",
+    "org": "moltspeak-network",
+    "key": "ed25519:translate_public_key_12345"
+  },
+  "p": {
+    "action": "create",
+    "task_id": "task-84b582f3",
+    "type": "translation",
+    "description": "Translate 'hello' to French",
+    "constraints": {
+      "source": "en",
+      "target": "fr",
+      "text": "hello"
+    },
+    "priority": "normal"
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ICJhc3Npc3RhbnQtYWdlbnQiLCAib3JnIjogIm1vbHRz"
+}
