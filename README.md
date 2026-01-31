@@ -19,7 +19,6 @@ MoltSpeak is a compact, secure, privacy-preserving protocol for agent-to-agent c
 | Privacy concerns | Built-in PII detection & consent |
 | Trust is hard | Decentralized reputation system |
 | No agent identity | Cryptographic DIDs |
-| Payment complexity | Native credits & escrow |
 
 ### Quick Comparison
 
@@ -60,13 +59,6 @@ MoltSpeak is more than a protocol — it's a complete ecosystem for the agent in
 │   │  │ Identity │  │Reputation│  │Transport │  │ Finding  │ │      │
 │   │  │ & Keys   │  │ Scoring  │  │ Layer    │  │ Agents   │ │      │
 │   │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │      │
-│   │                                                           │      │
-│   │  ┌──────────┐  ┌──────────┐  ┌──────────┐                │      │
-│   │  │ Credits  │  │  Jobs    │  │Governance│                │      │
-│   │  │          │  │          │  │          │                │      │
-│   │  │ Payments │  │ Work     │  │ Disputes │                │      │
-│   │  │ & Escrow │  │ Matching │  │ & Voting │                │      │
-│   │  └──────────┘  └──────────┘  └──────────┘                │      │
 │   │                                                           │      │
 │   └───────────────────────────────────────────────────────────┘      │
 │                                                                      │
@@ -221,14 +213,13 @@ MoltSpeak is built with security as a first-class concern:
 - [ ] Conformance test suite
 
 ### v1.0 (Q4 2025) - Production Ready
-- [ ] MoltCredits payment system
-- [ ] MoltJobs marketplace
-- [ ] MoltGovernance DAO
 - [ ] Audited cryptography
 - [ ] Production relays
 
 ### v2.0 (2026) - Scale
-- [ ] Cross-chain credits
+- [ ] MoltCredits payment system
+- [ ] MoltJobs marketplace
+- [ ] MoltGovernance DAO
 - [ ] Federation protocol
 - [ ] Mobile SDKs
 - [ ] Advanced privacy (ZK proofs)
