@@ -309,6 +309,17 @@ def validate_message(
         if "agent" not in message["from"]:
             result.warnings.append("from.agent is recommended")
     
+    # Agent name validation
+    name_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
+    if 'from' in message and isinstance(message['from'], dict):
+        agent_name = message['from'].get('agent', '')
+        if len(agent_name) > 256:
+            result.valid = False
+            result.errors.append('Agent name too long (max 256 chars)')
+        if agent_name and not name_pattern.match(agent_name):
+            result.valid = False
+            result.errors.append('Agent name contains invalid characters (alphanumeric, dash, underscore only)')
+    
     # To field structure
     if "to" in message and isinstance(message["to"], dict):
         if "agent" not in message["to"]:

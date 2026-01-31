@@ -315,6 +315,19 @@ function validateMessage(message, options = {}) {
     }
   }
 
+  // Agent name validation
+  const namePattern = /^[a-zA-Z0-9_-]+$/;
+  if (message.from?.agent) {
+    if (message.from.agent.length > 256) {
+      result.valid = false;
+      result.errors.push('Agent name too long (max 256 chars)');
+    }
+    if (!namePattern.test(message.from.agent)) {
+      result.valid = false;
+      result.errors.push('Agent name contains invalid characters (alphanumeric, dash, underscore only)');
+    }
+  }
+
   // To field structure
   if (message.to && typeof message.to === 'object') {
     if (!message.to.agent) {
