@@ -7,8 +7,11 @@
   --color-border: #2a2a3a;
   --color-text: #e4e4e7;
   --color-text-muted: #a1a1aa;
-  --color-primary: #8b5cf6;
-  --color-primary-hover: #a78bfa;
+  --color-primary: #FF4D4D;
+  --color-primary-hover: #FF6B6B;
+  --color-primary-dim: rgba(255, 77, 77, 0.15);
+  --color-coral: #FF4D4D;
+  --color-coral-dim: #CC3D3D;
   --color-success: #22c55e;
   --color-error: #ef4444;
   --color-warning: #eab308;
@@ -121,7 +124,7 @@ body {
 }
 
 .highlight {
-  background: linear-gradient(135deg, var(--color-primary), #ec4899);
+  background: linear-gradient(135deg, var(--color-primary), #FF8C42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -276,6 +279,94 @@ body {
 .comparison-list.good li::before {
   content: '✓';
   color: var(--color-success);
+}
+
+/* Ecosystem */
+.ecosystem {
+  padding: 80px 0;
+  background: var(--color-bg-alt);
+}
+
+.ecosystem h2 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.ecosystem-subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin-bottom: 48px;
+}
+
+.ecosystem-diagram {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ecosystem-layer {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+.layer-label {
+  width: 120px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius) 0 0 var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.layer-content {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-left: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.component-box {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.component-box:hover {
+  border-color: var(--color-primary);
+}
+
+.component-box.main {
+  background: linear-gradient(135deg, rgba(255, 77, 77, 0.2), rgba(255, 140, 66, 0.1));
+  border-color: var(--color-primary);
+}
+
+.component-box h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.component-box p {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.ecosystem-cta {
+  text-align: center;
+  margin-top: 32px;
 }
 
 /* Quick Start */
@@ -467,7 +558,7 @@ body {
 }
 
 .golden-rule {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+  background: linear-gradient(135deg, rgba(255, 77, 77, 0.1), rgba(255, 140, 66, 0.1));
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-lg);
   padding: 32px;
@@ -540,6 +631,111 @@ body {
   color: var(--color-primary);
 }
 
+/* For AI Agents */
+.for-agents {
+  padding: 100px 0;
+  background: var(--color-bg);
+}
+
+.for-agents h2 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.for-agents .section-subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  margin-bottom: 48px;
+}
+
+.for-agents h3 {
+  font-size: 24px;
+  margin: 48px 0 16px;
+}
+
+.agent-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.benefit-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.benefit-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.benefit-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.benefit-card h3 {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+}
+
+.benefit-card p {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.benefit-card code {
+  font-family: var(--font-mono);
+  background: var(--color-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--color-primary);
+}
+
+.agent-code-example {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 32px;
+}
+
+.agent-code-example pre {
+  padding: 24px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.agent-cta {
+  background: linear-gradient(135deg, rgba(255, 77, 77, 0.1), rgba(255, 140, 66, 0.05));
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+}
+
+.agent-cta h4 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.agent-cta-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* CTA */
 .cta {
   padding: 100px 0;
@@ -610,6 +806,16 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .agent-benefits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 36px;
@@ -639,7 +845,35 @@ body {
     grid-template-columns: 1fr;
   }
   
+  .agent-benefits {
+    grid-template-columns: 1fr;
+  }
+  
+  .agent-cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
   .nav-links {
     display: none;
+  }
+  
+  .ecosystem-layer {
+    flex-direction: column;
+  }
+  
+  .layer-label {
+    width: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  
+  .layer-content {
+    border-left: 1px solid var(--color-border);
+    border-radius: 0 0 var(--radius) var(--radius);
+    flex-wrap: wrap;
+  }
+  
+  .component-box {
+    min-width: calc(50% - 6px);
   }
 }

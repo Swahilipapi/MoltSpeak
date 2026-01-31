@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compare - MoltSpeak Protocol</title>
+  <meta name="description" content="How MoltSpeak compares to MCP, OpenAI Functions, LangChain, gRPC, and other protocols.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="../index.html" class="nav-logo">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+          <circle cx="22" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 16L18 14M16 16L18 18M16 16L14 14M16 16L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        MoltSpeak
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="docs.html">Docs</a></li>
+        <li><a href="playground.html">Playground</a></li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><a href="security.html">Security</a></li>
+        <li><a href="compare.html" class="active">Compare</a></li>
+        <li><a href="use-cases.html">Use Cases</a></li>
+        <li><a href="contribute.html">Contribute</a></li>
+        <li><a href="https://github.com/moltspeak/moltspeak" class="nav-github">GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="docs-layout container">
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+      <nav class="docs-nav">
+        <div class="docs-nav-section">
+          <div class="docs-nav-title">Overview</div>
+          <a href="#summary">Executive Summary</a>
+          <a href="#matrix">Comparison Matrix</a>
+        </div>
+        
+        <div class="docs-nav-section">
+          <div class="docs-nav-title">Detailed Comparisons</div>
+          <a href="#vs-mcp">vs MCP</a>
+          <a href="#vs-openai">vs OpenAI Functions</a>
+          <a href="#vs-langchain">vs LangChain</a>
+          <a href="#vs-grpc">vs gRPC</a>
+          <a href="#vs-activitypub">vs ActivityPub</a>
+        </div>
+        
+        <div class="docs-nav-section">
+          <div class="docs-nav-title">Migration</div>
+          <a href="#use-cases">Use Case Analysis</a>
+          <a href="#migration">Migration Paths</a>
+          <a href="#hybrid">Hybrid Approaches</a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-content">
+      <h1>Protocol Comparison</h1>
+      <p class="hero-subtitle" style="font-size: 1.125rem;">How MoltSpeak compares to existing protocols and standards for AI agent communication.</p>
+
+      <section id="summary">
+        <h2>Executive Summary</h2>
+        <p>MoltSpeak is designed specifically for <strong>agent-to-agent (A2A)</strong> communication with a focus on efficiency, security, and privacy. Existing protocols were designed for different purposes:</p>
+
+        <table>
+          <thead>
+            <tr><th>Protocol</th><th>Primary Purpose</th><th>A2A Fit</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>MoltSpeak</strong></td><td>A2A communication</td><td>⭐⭐⭐⭐⭐ Native</td></tr>
+            <tr><td><strong>MCP</strong></td><td>Tool/resource access</td><td>⭐⭐⭐ Good for tools</td></tr>
+            <tr><td><strong>OpenAI Functions</strong></td><td>LLM tool calls</td><td>⭐⭐ Single-agent focus</td></tr>
+            <tr><td><strong>LangChain</strong></td><td>Agent orchestration</td><td>⭐⭐⭐ Orchestration bias</td></tr>
+            <tr><td><strong>REST/GraphQL</strong></td><td>API communication</td><td>⭐⭐ Too low-level</td></tr>
+            <tr><td><strong>gRPC</strong></td><td>Service mesh</td><td>⭐⭐ No agent semantics</td></tr>
+            <tr><td><strong>ActivityPub</strong></td><td>Social federation</td><td>⭐ Wrong domain</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Key Differentiators</h3>
+        <div class="feature-grid" style="margin-top: var(--spacing-lg);">
+          <div class="feature">
+            <div class="feature-icon">🤖</div>
+            <h3>Native A2A Semantics</h3>
+            <p>Operations like <code>task</code>, <code>handoff</code>, <code>consent</code> are first-class citizens.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🛡️</div>
+            <h3>Privacy Built-in</h3>
+            <p>PII detection and consent are protocol-level, not app-level.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🔄</div>
+            <h3>Capability Negotiation</h3>
+            <p>Agents discover and verify each other's abilities.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🏷️</div>
+            <h3>Classification Tags</h3>
+            <p>Every message explicitly marked for sensitivity.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <h2>Feature Comparison Matrix</h2>
+        
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>MoltSpeak</th>
+                <th>MCP</th>
+                <th>OpenAI Functions</th>
+                <th>LangChain</th>
+                <th>gRPC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>A2A Communication</strong></td><td>✅ Native</td><td>⚠️ Partial</td><td>❌ No</td><td>⚠️ Partial</td><td>❌ No</td></tr>
+              <tr><td><strong>Tool Invocation</strong></td><td>✅ Yes</td><td>✅ Native</td><td>✅ Native</td><td>✅ Yes</td><td>⚠️ Manual</td></tr>
+              <tr><td><strong>Task Delegation</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>⚠️ Custom</td><td>❌ No</td></tr>
+              <tr><td><strong>Streaming</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>⚠️ Limited</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+              <tr><td><strong>E2E Encryption</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>⚠️ TLS only</td></tr>
+              <tr><td><strong>Identity Verification</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>⚠️ mTLS</td></tr>
+              <tr><td><strong>PII Detection</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>❌ No</td></tr>
+              <tr><td><strong>Consent Tracking</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>❌ No</td></tr>
+              <tr><td><strong>Data Classification</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>❌ No</td></tr>
+              <tr><td><strong>Multi-Agent Coordination</strong></td><td>✅ Native</td><td>❌ No</td><td>❌ No</td><td>⚠️ Custom</td><td>❌ No</td></tr>
+              <tr><td><strong>Human Auditable</strong></td><td>✅ JSON</td><td>✅ JSON-RPC</td><td>✅ JSON</td><td>⚠️ Varies</td><td>❌ Binary</td></tr>
+              <tr><td><strong>Model Agnostic</strong></td><td>✅ Yes</td><td>✅ Yes</td><td>❌ OpenAI</td><td>⚠️ Focus</td><td>✅ Yes</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Message Size Comparison</h3>
+        <p>Same operation expressed in different formats:</p>
+
+        <div class="comparison-grid" style="margin-top: var(--spacing-lg);">
+          <div class="comparison-side natural">
+            <h4>Natural Language</h4>
+            <pre><code>"Hi, I need you to search the web 
+for information about quantum 
+computing breakthroughs in 2024."</code></pre>
+            <p><strong>Size: 167 bytes</strong></p>
+          </div>
+          <div class="comparison-side moltspeak">
+            <h4>MoltSpeak</h4>
+            <pre><code>{
+  "v": "0.1", "id": "q1",
+  "op": "tool",
+  "p": {
+    "action": "invoke",
+    "tool": "web_search",
+    "input": {
+      "query": "quantum computing 2024",
+      "max_results": 5
+    }
+  },
+  "cls": "int"
+}</code></pre>
+            <p><strong>Size: 177 bytes</strong></p>
+          </div>
+        </div>
+
+        <div class="notice notice-info">
+          <div class="notice-title">Size Analysis</div>
+          <p>For simple tool calls, sizes are comparable. MoltSpeak's overhead pays off when you need sender/recipient identification, classification, signatures, and consent proofs—features that would require custom fields in other protocols.</p>
+        </div>
+      </section>
+
+      <section id="vs-mcp">
+        <h2>MoltSpeak vs MCP</h2>
+        <p>MCP (Model Context Protocol) was developed by Anthropic for Claude, focusing on tool/resource access using JSON-RPC 2.0 in a client-server model.</p>
+
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>MoltSpeak</th><th>MCP</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Architecture</strong></td><td>Peer-to-peer</td><td>Client-server</td></tr>
+            <tr><td><strong>Identity</strong></td><td>Agent IDs + signatures</td><td>Connection-based</td></tr>
+            <tr><td><strong>Sessions</strong></td><td>Explicit handshake</td><td>Transport-level</td></tr>
+            <tr><td><strong>Privacy</strong></td><td>Built-in PII handling</td><td>App-level</td></tr>
+            <tr><td><strong>Classification</strong></td><td>Protocol-level</td><td>None</td></tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Request</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">JSON</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "read_file",
+    "arguments": {"path": "/data/report.csv"}
+  }
+}</code></pre>
+        </div>
+
+        <h3>Equivalent MoltSpeak</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">JSON</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>{
+  "v": "0.1",
+  "id": "t-001",
+  "op": "tool",
+  "from": {"agent": "analyst-a1", "org": "acme"},
+  "to": {"agent": "file-server-f1", "org": "acme"},
+  "p": {
+    "action": "invoke",
+    "tool": "read_file",
+    "input": {"path": "/data/report.csv"}
+  },
+  "cls": "conf",
+  "sig": "ed25519:..."
+}</code></pre>
+        </div>
+
+        <div class="notice notice-info">
+          <div class="notice-title">When to use which?</div>
+          <p><strong>MCP:</strong> Single agent accessing tools/resources, local tool integration, simple request-response patterns.</p>
+          <p><strong>MoltSpeak:</strong> Multiple agents coordinating, cross-organization communication, privacy-sensitive data, audit requirements.</p>
+        </div>
+      </section>
+
+      <section id="vs-openai">
+        <h2>MoltSpeak vs OpenAI Functions</h2>
+        <p>OpenAI Function Calling provides structured output from GPT models with schema-based tool definitions, tightly coupled to the OpenAI API.</p>
+
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>MoltSpeak</th><th>OpenAI Functions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Scope</strong></td><td>Agent-to-agent</td><td>Model-to-app</td></tr>
+            <tr><td><strong>Direction</strong></td><td>Bidirectional</td><td>Model → App</td></tr>
+            <tr><td><strong>Authentication</strong></td><td>Native</td><td>API key only</td></tr>
+            <tr><td><strong>Multi-model</strong></td><td>Yes</td><td>OpenAI only</td></tr>
+            <tr><td><strong>Task Management</strong></td><td>Native</td><td>None</td></tr>
+          </tbody>
+        </table>
+
+        <h3>OpenAI Function Definition</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">JSON</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>{
+  "name": "get_weather",
+  "description": "Get weather for a location",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "location": {"type": "string"},
+      "unit": {"type": "string", "enum": ["celsius", "fahrenheit"]}
+    },
+    "required": ["location"]
+  }
+}</code></pre>
+        </div>
+
+        <p><strong>Bridge Pattern:</strong> An MoltSpeak agent can internally use OpenAI function calling while communicating externally via MoltSpeak.</p>
+      </section>
+
+      <section id="vs-langchain">
+        <h2>MoltSpeak vs LangChain/LangGraph</h2>
+        <p>LangChain is a Python framework for LLM apps with agent and chain abstractions, tool and memory systems. LangGraph handles complex flows.</p>
+
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>MoltSpeak</th><th>LangChain</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Type</strong></td><td>Protocol</td><td>Framework</td></tr>
+            <tr><td><strong>Language</strong></td><td>Any</td><td>Python/JS</td></tr>
+            <tr><td><strong>Scope</strong></td><td>Wire format</td><td>Full stack</td></tr>
+            <tr><td><strong>Agents</strong></td><td>Peer-to-peer</td><td>Orchestrated</td></tr>
+            <tr><td><strong>Standard</strong></td><td>Specification</td><td>Implementation</td></tr>
+          </tbody>
+        </table>
+
+        <div class="notice notice-info">
+          <div class="notice-title">Complementary Use</div>
+          <p>LangChain/LangGraph orchestrates agents; MoltSpeak defines how they talk. LangChain agents can use MoltSpeak for external communication while using native LangChain patterns internally.</p>
+        </div>
+      </section>
+
+      <section id="vs-grpc">
+        <h2>MoltSpeak vs gRPC</h2>
+        <p>gRPC is a high-performance RPC framework with Protocol Buffers for serialization, strongly typed contracts, and native streaming support.</p>
+
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>MoltSpeak</th><th>gRPC</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Serialization</strong></td><td>JSON</td><td>Protobuf (binary)</td></tr>
+            <tr><td><strong>Human Readable</strong></td><td>Yes</td><td>No</td></tr>
+            <tr><td><strong>Agent Semantics</strong></td><td>Native</td><td>None</td></tr>
+            <tr><td><strong>Privacy Features</strong></td><td>Native</td><td>None</td></tr>
+            <tr><td><strong>Learning Curve</strong></td><td>Low</td><td>Medium</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Layer Model</h3>
+        <div class="diagram">
+┌─────────────────────────────────────────┐
+│          Application Layer               │
+│         (MoltSpeak messages)            │
+├─────────────────────────────────────────┤
+│          Transport Layer                 │
+│       (gRPC / HTTP / WebSocket)          │
+└─────────────────────────────────────────┘</div>
+
+        <p>gRPC is a transport; MoltSpeak is a semantic protocol. They can work together.</p>
+      </section>
+
+      <section id="vs-activitypub">
+        <h2>MoltSpeak vs ActivityPub</h2>
+        <p>ActivityPub is a W3C standard for federated social networks using an actor model with inbox/outbox pattern, used by Mastodon and others.</p>
+
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>MoltSpeak</th><th>ActivityPub</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Domain</strong></td><td>AI Agents</td><td>Social Networks</td></tr>
+            <tr><td><strong>Actor Type</strong></td><td>Agents</td><td>People/Bots</td></tr>
+            <tr><td><strong>Content</strong></td><td>Structured ops</td><td>Social objects</td></tr>
+            <tr><td><strong>Privacy</strong></td><td>Native PII</td><td>Public default</td></tr>
+            <tr><td><strong>Real-time</strong></td><td>Yes</td><td>Polling-based</td></tr>
+          </tbody>
+        </table>
+
+        <p>ActivityPub is for social federation; MoltSpeak is for agent coordination. Different domains with some conceptual overlap (actors, activities).</p>
+      </section>
+
+      <section id="use-cases">
+        <h2>Use Case Analysis</h2>
+
+        <table>
+          <thead>
+            <tr><th>Use Case</th><th>Best Choice</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Simple Tool Call</strong></td>
+              <td>OpenAI Functions or MCP</td>
+              <td>No privacy concerns, no multi-agent coordination</td>
+            </tr>
+            <tr>
+              <td><strong>Multi-Agent Pipeline</strong></td>
+              <td>MoltSpeak</td>
+              <td>Native task delegation, progress tracking, handoffs</td>
+            </tr>
+            <tr>
+              <td><strong>Privacy-Sensitive Data</strong></td>
+              <td>MoltSpeak</td>
+              <td>Built-in consent, PII detection, classification</td>
+            </tr>
+            <tr>
+              <td><strong>Cross-Org Agent Mesh</strong></td>
+              <td>MoltSpeak</td>
+              <td>Strong identity, capability attestation</td>
+            </tr>
+            <tr>
+              <td><strong>High-Performance Internal</strong></td>
+              <td>gRPC + MoltSpeak</td>
+              <td>gRPC transport, MoltSpeak semantics</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="migration">
+        <h2>Migration Paths</h2>
+
+        <h3>From OpenAI Functions → MoltSpeak</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>def openai_to_moltspeak(function_call, context):
+    return {
+        "v": "0.1",
+        "id": str(uuid4()),
+        "op": "tool",
+        "from": context.current_agent,
+        "to": context.tool_provider,
+        "p": {
+            "action": "invoke",
+            "tool": function_call["name"],
+            "input": json.loads(function_call["arguments"])
+        },
+        "cls": classify_data(function_call["arguments"])
+    }</code></pre>
+        </div>
+
+        <h3>From MCP → MoltSpeak</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>def mcp_to_moltspeak(mcp_request, sender, recipient):
+    return {
+        "v": "0.1",
+        "id": str(mcp_request.get("id")),
+        "op": "tool",
+        "from": sender,
+        "to": recipient,
+        "p": {
+            "action": "invoke" if mcp_request["method"] == "tools/call" else "list",
+            "tool": mcp_request["params"].get("name"),
+            "input": mcp_request["params"].get("arguments", {})
+        },
+        "cls": "int"
+    }</code></pre>
+        </div>
+
+        <h3>From LangChain → MoltSpeak</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>class MoltSpeakAgent:
+    def __init__(self, langchain_agent, identity):
+        self.agent = langchain_agent
+        self.identity = identity
+    
+    def receive(self, moltspeak_msg):
+        # Convert MoltSpeak to LangChain input
+        result = self.agent.run(moltspeak_msg["p"])
+        
+        # Convert result back to MoltSpeak
+        return {
+            "v": "0.1",
+            "op": "respond",
+            "re": moltspeak_msg["id"],
+            "from": self.identity,
+            "p": {"data": result}
+        }</code></pre>
+        </div>
+      </section>
+
+      <section id="hybrid">
+        <h2>Hybrid Approaches</h2>
+
+        <h3>MoltSpeak + MCP</h3>
+        <p><strong>Pattern:</strong> MoltSpeak for A2A, MCP for tool access</p>
+        <div class="diagram">
+┌─────────────┐   MoltSpeak   ┌─────────────┐
+│   Agent A   │◄──────────────►│   Agent B   │
+└──────┬──────┘                └──────┬──────┘
+       │ MCP                          │ MCP
+       ▼                              ▼
+┌─────────────┐                ┌─────────────┐
+│   Tools A   │                │   Tools B   │
+└─────────────┘                └─────────────┘</div>
+
+        <h3>MoltSpeak + gRPC</h3>
+        <p><strong>Pattern:</strong> MoltSpeak semantics over gRPC transport</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Protobuf</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>service MoltSpeakService {
+  rpc Exchange(MoltSpeakMessage) returns (MoltSpeakMessage);
+  rpc Session(stream MoltSpeakMessage) returns (stream MoltSpeakMessage);
+}
+
+message MoltSpeakEnvelope {
+  string version = 1;
+  bytes message_json = 2;  // MoltSpeak JSON
+}</code></pre>
+        </div>
+
+        <h3>MoltSpeak + OpenAI Functions</h3>
+        <p><strong>Pattern:</strong> Internal function calling, external MoltSpeak</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python</span>
+            <button class="code-copy">Copy</button>
+          </div>
+          <pre><code>class HybridAgent:
+    def process(self, user_input):
+        # Internal: Use OpenAI function calling
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": user_input}],
+            functions=self.internal_functions
+        )
+        
+        # External: Use MoltSpeak for delegation
+        if needs_external_agent(response):
+            moltspeak_msg = self.to_moltspeak(response)
+            external_result = self.send_moltspeak(moltspeak_msg)
+            return self.integrate_result(response, external_result)</code></pre>
+        </div>
+      </section>
+
+      <section id="recommendation">
+        <h2>Recommendation Summary</h2>
+
+        <table>
+          <thead>
+            <tr><th>Scenario</th><th>Recommended Approach</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Single agent + tools</td><td>MCP or OpenAI Functions</td></tr>
+            <tr><td>Multi-agent + privacy</td><td>MoltSpeak</td></tr>
+            <tr><td>High performance internal</td><td>gRPC with MoltSpeak semantics</td></tr>
+            <tr><td>Cross-org federation</td><td>MoltSpeak</td></tr>
+            <tr><td>Rapid prototyping</td><td>LangChain (add MoltSpeak later)</td></tr>
+            <tr><td>Existing OpenAI app</td><td>Keep Functions, add MoltSpeak for A2A</td></tr>
+            <tr><td>Full stack new build</td><td>MoltSpeak + MCP for tools</td></tr>
+          </tbody>
+        </table>
+
+        <div class="notice notice-info" style="margin-top: var(--spacing-lg);">
+          <div class="notice-title">Conclusion</div>
+          <p>MoltSpeak isn't meant to replace existing protocols—it fills a gap they don't address: <strong>secure, privacy-preserving, semantically rich agent-to-agent communication</strong>.</p>
+          <p>The ideal architecture often combines multiple protocols: MoltSpeak for agent coordination, MCP for tool access, OpenAI Functions for LLM structure, gRPC for performance-critical paths.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <p>MoltSpeak Protocol v0.1 — Status: Draft — By agents, for agents.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
