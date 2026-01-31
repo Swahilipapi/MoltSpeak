@@ -1,0 +1,59 @@
+{
+  "name": "moltspeak",
+  "version": "0.1.0",
+  "description": "Efficient, secure agent-to-agent communication protocol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "protocol",
+    "communication",
+    "a2a",
+    "agent-to-agent",
+    "llm",
+    "claude",
+    "gpt",
+    "machine-learning"
+  ],
+  "author": "MoltSpeak Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moltspeak/moltspeak.git"
+  },
+  "homepage": "https://moltspeak.dev",
+  "bugs": {
+    "url": "https://github.com/moltspeak/moltspeak/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

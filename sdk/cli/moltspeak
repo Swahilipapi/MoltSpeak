@@ -1,0 +1,585 @@
+#!/usr/bin/env node
+/**
+ * MoltSpeak CLI
+ * 
+ * Command-line interface for encoding, decoding, validating, and signing
+ * MoltSpeak messages.
+ * 
+ * Usage:
+ *   moltspeak encode "natural language message"
+ *   moltspeak decode <encoded>
+ *   moltspeak validate <message>
+ *   moltspeak sign --key <keyfile>
+ *   moltspeak help
+ * 
+ * @version 0.1.0
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+// Import the SDK (adjust path as needed)
+const sdk = require('../js/moltspeak');
+
+// ============================================================================
+// CLI Helpers
+// ============================================================================
+
+const COLORS = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+  dim: '\x1b[2m'
+};
+
+function colorize(text, color) {
+  if (!process.stdout.isTTY) return text;
+  return `${COLORS[color] || ''}${text}${COLORS.reset}`;
+}
+
+function log(message) {
+  console.log(message);
+}
+
+function error(message) {
+  console.error(colorize(`Error: ${message}`, 'red'));
+}
+
+function success(message) {
+  console.log(colorize(message, 'green'));
+}
+
+function warn(message) {
+  console.log(colorize(`Warning: ${message}`, 'yellow'));
+}
+
+function info(message) {
+  console.log(colorize(message, 'cyan'));
+}
+
+function printHelp() {
+  log(`
+${colorize('MoltSpeak CLI', 'cyan')} - Agent-to-agent communication protocol tools
+
+${colorize('USAGE:', 'yellow')}
+  moltspeak <command> [options] [arguments]
+
+${colorize('COMMANDS:', 'yellow')}
+  encode <text>        Encode natural language to MoltSpeak message
+  decode <json>        Decode MoltSpeak message to human-readable format
+  validate <json>      Validate an MoltSpeak message
+  sign <json>          Sign a message with a private key
+  verify <json>        Verify a signed message
+  create <op>          Create a new message interactively
+  schema               Show message schema
+  help                 Show this help message
+
+${colorize('OPTIONS:', 'yellow')}
+  --key <file>         Path to key file (for sign/verify)
+  --pretty             Pretty print JSON output
+  --envelope           Wrap output in envelope
+  --from <agent>       Sender agent ID
+  --to <agent>         Recipient agent ID
+  --stdin              Read input from stdin
+  --quiet              Minimal output
+  --version            Show version
+
+${colorize('EXAMPLES:', 'yellow')}
+  # Encode natural language to message
+  moltspeak encode "query weather in Tokyo"
+  
+  # Decode a message
+  moltspeak decode '{"v":"0.1","op":"query",...}'
+  
+  # Validate a message
+  moltspeak validate message.json
+  
+  # Sign a message
+  moltspeak sign message.json --key private.key
+  
+  # Create a query message
+  moltspeak create query --from myagent --to weatherbot
+
+${colorize('VERSION:', 'yellow')}
+  ${sdk.PROTOCOL_VERSION} (protocol) / 0.1.0 (cli)
+`);
+}
+
+function printSchema() {
+  log(`
+${colorize('MoltSpeak Message Schema', 'cyan')}
+
+${colorize('Base Message:', 'yellow')}
+  {
+    "v": "0.1",              // Protocol version (required)
+    "id": "<uuid>",          // Message ID (required)
+    "ts": <timestamp>,       // Unix milliseconds (required)
+    "op": "<operation>",     // Operation type (required)
+    "from": {                // Sender identity
+      "agent": "<id>",
+      "org": "<org>",
+      "key": "ed25519:..."
+    },
+    "to": {                  // Recipient identity
+      "agent": "<id>",
+      "org": "<org>"
+    },
+    "p": { ... },            // Payload (operation-specific)
+    "cls": "<class>",        // Classification (required)
+    "re": "<msg-id>",        // Reply-to reference
+    "sig": "ed25519:...",    // Signature
+    "exp": <timestamp>,      // Expiry
+    "cap": ["..."],          // Required capabilities
+    "ext": { ... }           // Extensions
+  }
+
+${colorize('Operations:', 'yellow')}
+  hello, verify, query, respond, task, stream, tool, consent, error
+
+${colorize('Classifications:', 'yellow')}
+  pub (public), int (internal), conf (confidential), pii (PII), sec (secret)
+
+${colorize('Error Codes:', 'yellow')}
+  E_PARSE, E_VERSION, E_SCHEMA, E_MISSING_FIELD, E_INVALID_PARAM,
+  E_AUTH_FAILED, E_SIGNATURE, E_CAPABILITY, E_CONSENT, E_CLASSIFICATION,
+  E_RATE_LIMIT, E_TIMEOUT, E_TASK_FAILED, E_INTERNAL
+`);
+}
+
+// ============================================================================
+// Argument Parsing
+// ============================================================================
+
+function parseArgs(args) {
+  const result = {
+    command: null,
+    args: [],
+    options: {
+      key: null,
+      pretty: false,
+      envelope: false,
+      from: 'cli-agent',
+      to: null,
+      stdin: false,
+      quiet: false,
+      version: false,
+      help: false
+    }
+  };
+
+  let i = 0;
+  while (i < args.length) {
+    const arg = args[i];
+    
+    if (arg.startsWith('--')) {
+      const option = arg.slice(2);
+      switch (option) {
+        case 'key':
+          result.options.key = args[++i];
+          break;
+        case 'pretty':
+          result.options.pretty = true;
+          break;
+        case 'envelope':
+          result.options.envelope = true;
+          break;
+        case 'from':
+          result.options.from = args[++i];
+          break;
+        case 'to':
+          result.options.to = args[++i];
+          break;
+        case 'stdin':
+          result.options.stdin = true;
+          break;
+        case 'quiet':
+          result.options.quiet = true;
+          break;
+        case 'version':
+          result.options.version = true;
+          break;
+        case 'help':
+          result.options.help = true;
+          break;
+        default:
+          warn(`Unknown option: --${option}`);
+      }
+    } else if (arg.startsWith('-')) {
+      // Short options
+      const chars = arg.slice(1);
+      for (const char of chars) {
+        switch (char) {
+          case 'p': result.options.pretty = true; break;
+          case 'e': result.options.envelope = true; break;
+          case 'q': result.options.quiet = true; break;
+          case 'v': result.options.version = true; break;
+          case 'h': result.options.help = true; break;
+          default: warn(`Unknown option: -${char}`);
+        }
+      }
+    } else if (!result.command) {
+      result.command = arg;
+    } else {
+      result.args.push(arg);
+    }
+    i++;
+  }
+
+  return result;
+}
+
+// ============================================================================
+// Commands
+// ============================================================================
+
+async function readInput(args, options) {
+  if (options.stdin) {
+    return new Promise((resolve) => {
+      let data = '';
+      process.stdin.on('data', chunk => data += chunk);
+      process.stdin.on('end', () => resolve(data.trim()));
+    });
+  }
+  
+  const input = args[0];
+  if (!input) {
+    throw new Error('No input provided. Use --stdin or provide an argument.');
+  }
+  
+  // Check if it's a file
+  if (fs.existsSync(input)) {
+    return fs.readFileSync(input, 'utf8').trim();
+  }
+  
+  return input;
+}
+
+async function commandEncode(args, options) {
+  const text = await readInput(args, options);
+  
+  if (!options.quiet) {
+    info(`Encoding: "${text}"`);
+  }
+  
+  const from = { agent: options.from };
+  const message = sdk.parseNaturalLanguage(text, from);
+  
+  if (options.to) {
+    message.to = { agent: options.to };
+  }
+  
+  const output = sdk.encode(message, {
+    pretty: options.pretty,
+    envelope: options.envelope
+  });
+  
+  log(output);
+  
+  if (!options.quiet) {
+    log('');
+    info(`Natural language: ${sdk.toNaturalLanguage(message)}`);
+  }
+}
+
+async function commandDecode(args, options) {
+  const input = await readInput(args, options);
+  
+  let message;
+  try {
+    message = sdk.decode(input, { validate: false });
+  } catch (e) {
+    error(`Failed to decode: ${e.message}`);
+    process.exit(1);
+  }
+  
+  if (!options.quiet) {
+    info('Decoded message:');
+  }
+  
+  if (options.pretty) {
+    log(JSON.stringify(message, null, 2));
+  } else {
+    log(JSON.stringify(message));
+  }
+  
+  if (!options.quiet) {
+    log('');
+    info(`Human readable: ${sdk.toNaturalLanguage(message)}`);
+    
+    // Check for PII
+    const piiResult = sdk.detectPII(message.p || {});
+    if (piiResult.hasPII) {
+      warn(`PII detected: ${piiResult.types.join(', ')}`);
+    }
+  }
+}
+
+async function commandValidate(args, options) {
+  const input = await readInput(args, options);
+  
+  let message;
+  try {
+    message = JSON.parse(input);
+  } catch (e) {
+    error(`Invalid JSON: ${e.message}`);
+    process.exit(1);
+  }
+  
+  const result = sdk.validateMessage(message, { strict: true, checkPII: true });
+  
+  if (result.valid) {
+    success('✓ Message is valid');
+  } else {
+    error('✗ Message is invalid');
+    log('');
+    log('Errors:');
+    result.errors.forEach(e => log(`  - ${e}`));
+  }
+  
+  if (result.warnings.length > 0) {
+    log('');
+    log('Warnings:');
+    result.warnings.forEach(w => log(`  - ${colorize(w, 'yellow')}`));
+  }
+  
+  process.exit(result.valid ? 0 : 1);
+}
+
+async function commandSign(args, options) {
+  if (!options.key) {
+    error('Private key required. Use --key <file>');
+    process.exit(1);
+  }
+  
+  const input = await readInput(args, options);
+  
+  let message;
+  try {
+    message = JSON.parse(input);
+  } catch (e) {
+    error(`Invalid JSON: ${e.message}`);
+    process.exit(1);
+  }
+  
+  // Read key file
+  let key;
+  try {
+    key = fs.readFileSync(options.key, 'utf8').trim();
+  } catch (e) {
+    error(`Cannot read key file: ${e.message}`);
+    process.exit(1);
+  }
+  
+  const signed = sdk.sign(message, key);
+  
+  const output = options.pretty 
+    ? JSON.stringify(signed, null, 2)
+    : JSON.stringify(signed);
+  
+  log(output);
+  
+  if (!options.quiet) {
+    log('');
+    success('✓ Message signed');
+    info(`Signature: ${signed.sig.slice(0, 30)}...`);
+  }
+}
+
+async function commandVerify(args, options) {
+  if (!options.key) {
+    error('Public key required. Use --key <file>');
+    process.exit(1);
+  }
+  
+  const input = await readInput(args, options);
+  
+  let message;
+  try {
+    message = JSON.parse(input);
+  } catch (e) {
+    error(`Invalid JSON: ${e.message}`);
+    process.exit(1);
+  }
+  
+  if (!message.sig) {
+    error('Message is not signed');
+    process.exit(1);
+  }
+  
+  // Read key file
+  let key;
+  try {
+    key = fs.readFileSync(options.key, 'utf8').trim();
+  } catch (e) {
+    error(`Cannot read key file: ${e.message}`);
+    process.exit(1);
+  }
+  
+  const valid = sdk.verify(message, key);
+  
+  if (valid) {
+    success('✓ Signature is valid');
+  } else {
+    error('✗ Signature is invalid');
+    process.exit(1);
+  }
+}
+
+async function commandCreate(args, options) {
+  const operation = args[0];
+  
+  if (!operation) {
+    error('Operation type required. Example: moltspeak create query');
+    log('Valid operations: ' + Object.values(sdk.OPERATIONS).join(', '));
+    process.exit(1);
+  }
+  
+  const from = { agent: options.from };
+  const to = options.to ? { agent: options.to } : { agent: 'unknown' };
+  
+  let message;
+  
+  switch (operation) {
+    case 'hello':
+      message = sdk.createHello(from, { operations: ['query', 'respond', 'task'] });
+      break;
+    
+    case 'query':
+      message = sdk.createQuery(
+        { domain: 'general', intent: 'information', params: {} },
+        from, to
+      );
+      break;
+    
+    case 'respond':
+      message = sdk.createResponse(
+        args[1] || 'reply-to-id',
+        { result: 'data' },
+        from, to
+      );
+      break;
+    
+    case 'task':
+      message = sdk.createTask(
+        { description: args[1] || 'Task description', type: 'general' },
+        from, to
+      );
+      break;
+    
+    case 'error':
+      message = sdk.createError(
+        args[1] || 'original-id',
+        { code: 'E_INTERNAL', message: 'Error message' },
+        from, to
+      );
+      break;
+    
+    default:
+      // Generic message creation
+      message = sdk.createMessage(operation)
+        .from(from)
+        .to(to)
+        .payload({})
+        .build({ validate: false });
+  }
+  
+  const output = sdk.encode(message, {
+    pretty: options.pretty,
+    envelope: options.envelope
+  });
+  
+  log(output);
+}
+
+async function commandPII(args, options) {
+  const input = await readInput(args, options);
+  
+  const result = sdk.detectPII(input);
+  
+  if (result.hasPII) {
+    warn('PII detected!');
+    log('');
+    log('Types found:');
+    result.findings.forEach(f => log(`  - ${f.type}: ${f.preview}`));
+    log('');
+    log('Masked version:');
+    log(sdk.maskPII(input));
+    process.exit(1);
+  } else {
+    success('No PII detected');
+    process.exit(0);
+  }
+}
+
+// ============================================================================
+// Main
+// ============================================================================
+
+async function main() {
+  const args = process.argv.slice(2);
+  const parsed = parseArgs(args);
+  
+  if (parsed.options.version) {
+    log(`moltspeak-cli v0.1.0 (protocol ${sdk.PROTOCOL_VERSION})`);
+    return;
+  }
+  
+  if (parsed.options.help || !parsed.command || parsed.command === 'help') {
+    printHelp();
+    return;
+  }
+  
+  try {
+    switch (parsed.command) {
+      case 'encode':
+        await commandEncode(parsed.args, parsed.options);
+        break;
+      
+      case 'decode':
+        await commandDecode(parsed.args, parsed.options);
+        break;
+      
+      case 'validate':
+        await commandValidate(parsed.args, parsed.options);
+        break;
+      
+      case 'sign':
+        await commandSign(parsed.args, parsed.options);
+        break;
+      
+      case 'verify':
+        await commandVerify(parsed.args, parsed.options);
+        break;
+      
+      case 'create':
+        await commandCreate(parsed.args, parsed.options);
+        break;
+      
+      case 'pii':
+        await commandPII(parsed.args, parsed.options);
+        break;
+      
+      case 'schema':
+        printSchema();
+        break;
+      
+      default:
+        error(`Unknown command: ${parsed.command}`);
+        log('Run "moltspeak help" for usage information.');
+        process.exit(1);
+    }
+  } catch (e) {
+    error(e.message);
+    process.exit(1);
+  }
+}
+
+main().catch(e => {
+  error(e.message);
+  process.exit(1);
+});

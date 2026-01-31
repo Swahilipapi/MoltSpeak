@@ -1,0 +1,325 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://moltspeak.dev/schemas/moltspeak-v0.1.json",
+  "title": "MoltSpeak Message",
+  "description": "Schema for MoltSpeak protocol messages v0.1",
+  "type": "object",
+  "required": ["v", "id", "ts", "op", "from", "to", "p", "cls"],
+  "properties": {
+    "v": {
+      "type": "string",
+      "description": "Protocol version",
+      "const": "0.1"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique message ID (UUID)",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "ts": {
+      "type": "integer",
+      "description": "Unix timestamp in milliseconds",
+      "minimum": 0
+    },
+    "op": {
+      "type": "string",
+      "description": "Operation type",
+      "enum": ["hello", "verify", "query", "respond", "task", "stream", "tool", "consent", "error"]
+    },
+    "from": {
+      "$ref": "#/definitions/AgentRef",
+      "description": "Sender agent reference"
+    },
+    "to": {
+      "$ref": "#/definitions/AgentRef",
+      "description": "Recipient agent reference"
+    },
+    "p": {
+      "type": "object",
+      "description": "Operation-specific payload"
+    },
+    "cls": {
+      "type": "string",
+      "description": "Data classification",
+      "enum": ["pub", "int", "conf", "pii", "sec"]
+    },
+    "sig": {
+      "type": "string",
+      "description": "Ed25519 signature",
+      "pattern": "^ed25519:[A-Za-z0-9+/=]+$"
+    },
+    "re": {
+      "type": "string",
+      "description": "Reply-to message ID"
+    },
+    "exp": {
+      "type": "integer",
+      "description": "Expiration timestamp in milliseconds",
+      "minimum": 0
+    },
+    "cap": {
+      "type": "array",
+      "description": "Required capabilities",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pii_meta": {
+      "$ref": "#/definitions/PIIMeta",
+      "description": "PII metadata (required when cls=pii)"
+    },
+    "ext": {
+      "type": "object",
+      "description": "Protocol extensions",
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "definitions": {
+    "AgentRef": {
+      "type": "object",
+      "required": ["agent", "org"],
+      "properties": {
+        "agent": {
+          "type": "string",
+          "description": "Agent identifier",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "org": {
+          "type": "string",
+          "description": "Organization identifier",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "key": {
+          "type": "string",
+          "description": "Ed25519 public key for signing",
+          "pattern": "^ed25519:[A-Za-z0-9+/=]+$"
+        },
+        "enc_key": {
+          "type": "string",
+          "description": "X25519 public key for encryption",
+          "pattern": "^x25519:[A-Za-z0-9+/=]+$"
+        }
+      }
+    },
+    "PIIMeta": {
+      "type": "object",
+      "required": ["types", "consent"],
+      "properties": {
+        "types": {
+          "type": "array",
+          "description": "Types of PII present",
+          "items": {
+            "type": "string",
+            "enum": ["email", "phone", "name", "address", "ssn", "dob", "financial", "health", "location", "other"]
+          },
+          "minItems": 1
+        },
+        "consent": {
+          "type": "object",
+          "required": ["granted_by", "purpose", "proof"],
+          "properties": {
+            "granted_by": {
+              "type": "string",
+              "description": "User who granted consent"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "Purpose of data processing"
+            },
+            "proof": {
+              "type": "string",
+              "description": "Consent token for verification"
+            },
+            "expires": {
+              "type": "integer",
+              "description": "Consent expiration timestamp"
+            },
+            "scope": {
+              "type": "string",
+              "description": "Scope restriction (e.g., internal_only)"
+            }
+          }
+        },
+        "mask_fields": {
+          "type": "array",
+          "description": "Fields to mask in logs",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "QueryPayload": {
+      "type": "object",
+      "required": ["domain"],
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Query domain (e.g., weather, calendar)"
+        },
+        "intent": {
+          "type": "string",
+          "description": "Query intent"
+        },
+        "params": {
+          "type": "object",
+          "description": "Query parameters"
+        },
+        "response_format": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["structured", "text", "stream"]
+            },
+            "schema": {
+              "type": "string"
+            },
+            "fields": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "RespondPayload": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error", "partial"]
+        },
+        "data": {
+          "description": "Response data"
+        },
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "TaskPayload": {
+      "type": "object",
+      "required": ["action", "task_id"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["create", "status", "cancel", "complete"]
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object"
+        },
+        "constraints": {
+          "type": "object"
+        },
+        "deadline": {
+          "type": "integer"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "normal", "high", "urgent"]
+        },
+        "callback": {
+          "type": "object",
+          "properties": {
+            "on_complete": {"type": "boolean"},
+            "on_progress": {"type": "boolean"}
+          }
+        },
+        "subtasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {
+              "id": {"type": "string"},
+              "type": {"type": "string"},
+              "delegate_to": {"type": "string"},
+              "depends_on": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "params": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    "ErrorPayload": {
+      "type": "object",
+      "required": ["code", "category", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code",
+          "enum": [
+            "E_PARSE", "E_VERSION", "E_SCHEMA", "E_MISSING_FIELD", "E_INVALID_PARAM",
+            "E_AUTH_FAILED", "E_SIGNATURE", "E_CAPABILITY",
+            "E_CONSENT", "E_CLASSIFICATION",
+            "E_RATE_LIMIT", "E_TIMEOUT",
+            "E_TASK_FAILED", "E_INTERNAL"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "enum": ["protocol", "validation", "auth", "privacy", "transport", "execution"]
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "recoverable": {
+          "type": "boolean",
+          "description": "Whether the operation can be retried"
+        },
+        "field": {
+          "type": "string",
+          "description": "Field that caused the error"
+        },
+        "suggestion": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": ["retry", "retry_after", "request_capability", "request_consent", "upgrade"]
+            },
+            "delay_ms": {"type": "integer"},
+            "capability": {"type": "string"},
+            "data_types": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional error context"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"cls": {"const": "pii"}}
+      },
+      "then": {
+        "required": ["pii_meta"]
+      }
+    }
+  ]
+}

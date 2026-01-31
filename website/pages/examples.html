@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examples - MoltSpeak Protocol</title>
+  <meta name="description" content="Real-world examples of MoltSpeak in action.">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-content">
+      <a href="../index.html" class="nav-logo">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+          <circle cx="22" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+          <path d="M16 16L18 14M16 16L18 18M16 16L14 14M16 16L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        MoltSpeak
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="docs.html">Docs</a></li>
+        <li><a href="playground.html">Playground</a></li>
+        <li><a href="examples.html" class="active">Examples</a></li>
+        <li><a href="security.html">Security</a></li>
+        <li><a href="compare.html">Compare</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top: calc(80px + var(--spacing-lg));">
+    <div class="section-header">
+      <h1>Real-World Examples</h1>
+      <p>See how MoltSpeak handles common agent-to-agent communication patterns.</p>
+    </div>
+
+    <div class="examples-grid">
+      <!-- Example 1: Weather Query -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>🌤️ Weather Query</h3>
+          <p>A simple query-response pattern for getting weather data.</p>
+        </div>
+        <div class="example-body">
+          <h4>Request</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+  "ts": 1703280000000,
+  "op": "query",
+  "from": {
+    "agent": "assistant-alpha",
+    "org": "acme-corp"
+  },
+  "to": {
+    "agent": "weather-service",
+    "org": "weather-api"
+  },
+  "p": {
+    "domain": "weather",
+    "intent": "current",
+    "params": {
+      "location": "San Francisco, CA",
+      "units": "metric"
+    }
+  },
+  "cls": "pub"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Response</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "f6e5d4c3-b2a1-4089-9876-543210fedcba",
+  "ts": 1703280001234,
+  "op": "respond",
+  "re": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+  "from": {
+    "agent": "weather-service",
+    "org": "weather-api"
+  },
+  "to": {
+    "agent": "assistant-alpha",
+    "org": "acme-corp"
+  },
+  "p": {
+    "status": "success",
+    "data": {
+      "location": "San Francisco, CA",
+      "temp_c": 18,
+      "feels_like_c": 16,
+      "conditions": "partly-cloudy",
+      "humidity": 65,
+      "wind_kph": 12
+    }
+  },
+  "cls": "pub"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 2: Research Task Delegation -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>📚 Research Task Delegation</h3>
+          <p>Delegating a research task to a specialized agent with constraints.</p>
+        </div>
+        <div class="example-body">
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "task-001-research",
+  "ts": 1703280000000,
+  "op": "task",
+  "from": {
+    "agent": "manager-bot",
+    "org": "research-lab"
+  },
+  "to": {
+    "agent": "research-specialist",
+    "org": "research-lab"
+  },
+  "p": {
+    "action": "create",
+    "task_id": "research-2024-001",
+    "type": "literature-review",
+    "description": "Find and summarize recent papers on LLM alignment techniques",
+    "constraints": {
+      "max_results": 15,
+      "recency": "12mo",
+      "sources": ["arxiv", "semanticscholar", "openreview"],
+      "min_citations": 5,
+      "topics": ["RLHF", "constitutional AI", "red teaming"]
+    },
+    "deadline": 1703366400000,
+    "priority": "high",
+    "callback": {
+      "on_complete": true,
+      "on_progress": true,
+      "progress_interval_ms": 300000
+    },
+    "output_format": {
+      "type": "structured",
+      "schema": "literature-review-v1",
+      "include": ["summary", "key_findings", "methodology", "relevance_score"]
+    }
+  },
+  "cls": "int",
+  "cap": ["task.create"]
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 3: Tool Invocation -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>🔧 Tool Invocation</h3>
+          <p>One agent invoking a tool through another agent's capabilities.</p>
+        </div>
+        <div class="example-body">
+          <h4>Request</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "tool-invoke-001",
+  "ts": 1703280000000,
+  "op": "tool",
+  "from": {
+    "agent": "analysis-agent",
+    "org": "data-corp"
+  },
+  "to": {
+    "agent": "code-executor",
+    "org": "data-corp"
+  },
+  "p": {
+    "action": "invoke",
+    "tool": "python-sandbox",
+    "input": {
+      "code": "import pandas as pd\ndf = pd.read_csv('data.csv')\nprint(df.describe())",
+      "timeout_seconds": 30,
+      "memory_limit_mb": 512
+    }
+  },
+  "cls": "conf",
+  "cap": ["tool.invoke", "code.execute"]
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Response</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "tool-result-001",
+  "ts": 1703280002500,
+  "op": "respond",
+  "re": "tool-invoke-001",
+  "p": {
+    "status": "success",
+    "data": {
+      "stdout": "       col_a    col_b\ncount  1000.0  1000.0\nmean     50.2    75.8\nstd      14.3    22.1",
+      "stderr": "",
+      "exit_code": 0,
+      "execution_time_ms": 1847
+    }
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 4: PII with Consent -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>🔐 PII Handling with Consent</h3>
+          <p>Properly transmitting personal data with consent tracking.</p>
+        </div>
+        <div class="example-body">
+          <h4>Consent Request</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "consent-req-001",
+  "ts": 1703280000000,
+  "op": "consent",
+  "p": {
+    "action": "request",
+    "data_types": ["name", "email", "calendar"],
+    "purpose": "Schedule meeting with contacts",
+    "duration": "1h",
+    "human": "user:john@example.com"
+  },
+  "cls": "int"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Message with PII (After Consent)</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "calendar-sync-001",
+  "ts": 1703280120000,
+  "op": "query",
+  "from": {
+    "agent": "calendar-assistant",
+    "org": "productivity-suite"
+  },
+  "to": {
+    "agent": "scheduler",
+    "org": "productivity-suite"
+  },
+  "p": {
+    "domain": "calendar",
+    "intent": "find-slot",
+    "params": {
+      "attendees": ["jane@example.com", "bob@example.com"],
+      "duration_minutes": 60,
+      "preferred_times": ["10:00-12:00", "14:00-17:00"],
+      "timezone": "America/Los_Angeles"
+    }
+  },
+  "cls": "pii",
+  "pii_meta": {
+    "types": ["email"],
+    "consent": {
+      "granted_by": "user:john@example.com",
+      "purpose": "Schedule meeting with contacts",
+      "expires": 1703283600000,
+      "proof": "consent-token:ct_abc123xyz"
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 5: Multi-Agent Coordination -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>🤝 Multi-Agent Coordination</h3>
+          <p>Orchestrating multiple agents for a complex workflow.</p>
+        </div>
+        <div class="example-body">
+          <div class="diagram" style="font-size: 0.8rem;">
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│ Coordinator │─────>│  Researcher │─────>│   Writer    │
+└──────┬──────┘      └──────┬──────┘      └──────┬──────┘
+       │                    │                    │
+       │  1. task:research  │                    │
+       │───────────────────>│                    │
+       │                    │                    │
+       │  2. respond:data   │                    │
+       │<───────────────────│                    │
+       │                    │                    │
+       │  3. task:write     │                    │
+       │────────────────────────────────────────>│
+       │                    │                    │
+       │  4. respond:draft  │                    │
+       │<────────────────────────────────────────│
+          </div>
+          
+          <h4 style="margin-top: var(--spacing-lg);">Step 1: Coordinator → Researcher</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "workflow-step-1",
+  "op": "task",
+  "p": {
+    "action": "create",
+    "task_id": "wf-001-research",
+    "type": "data-gathering",
+    "description": "Gather market data for Q4 report",
+    "constraints": {
+      "sources": ["internal-db", "market-api"],
+      "date_range": ["2024-10-01", "2024-12-31"]
+    },
+    "callback": {"on_complete": true}
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Step 3: Coordinator → Writer (with research data)</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "workflow-step-3",
+  "op": "task",
+  "p": {
+    "action": "create",
+    "task_id": "wf-001-write",
+    "type": "content-generation",
+    "description": "Write executive summary from research data",
+    "input": {
+      "research_ref": "wf-001-research",
+      "data_snapshot": {
+        "revenue": 12500000,
+        "growth": 0.23,
+        "key_metrics": ["DAU", "retention", "conversion"]
+      }
+    },
+    "output_format": {
+      "type": "markdown",
+      "max_words": 500,
+      "sections": ["highlights", "risks", "recommendations"]
+    }
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 6: Error Handling -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>⚠️ Error Handling</h3>
+          <p>Structured error responses with recovery suggestions.</p>
+        </div>
+        <div class="example-body">
+          <h4>Rate Limit Error</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "error-ratelimit-001",
+  "ts": 1703280000000,
+  "op": "error",
+  "re": "query-that-failed",
+  "p": {
+    "code": "E_RATE_LIMIT",
+    "category": "transport",
+    "message": "Rate limit exceeded: 100 requests per minute",
+    "recoverable": true,
+    "suggestion": {
+      "action": "retry_after",
+      "delay_ms": 30000
+    },
+    "context": {
+      "limit": 100,
+      "window": "1m",
+      "current": 127
+    }
+  },
+  "cls": "int"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Consent Required Error</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "error-consent-001",
+  "ts": 1703280000000,
+  "op": "error",
+  "re": "pii-message-blocked",
+  "p": {
+    "code": "E_CONSENT",
+    "category": "privacy",
+    "message": "PII detected without valid consent: email addresses found",
+    "recoverable": true,
+    "suggestion": {
+      "action": "request_consent",
+      "consent_type": "pii",
+      "data_types": ["email"]
+    },
+    "detected_pii": {
+      "types": ["email"],
+      "count": 2,
+      "fields": ["p.params.attendees"]
+    }
+  },
+  "cls": "int"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 7: Streaming -->
+      <div class="example-card">
+        <div class="example-header">
+          <h3>📡 Streaming Large Data</h3>
+          <p>Using streams for large or real-time data transfer.</p>
+        </div>
+        <div class="example-body">
+          <h4>Start Stream</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "stream-start-001",
+  "op": "stream",
+  "p": {
+    "action": "start",
+    "stream_id": "data-export-001",
+    "type": "json-lines",
+    "chunk_size": 65536,
+    "total_size_estimate": 10485760,
+    "compression": "gzip"
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">Stream Chunk</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "stream-chunk-042",
+  "op": "stream",
+  "p": {
+    "action": "chunk",
+    "stream_id": "data-export-001",
+    "sequence": 42,
+    "data": "base64:H4sIAAAAAAAAA...",
+    "checksum": "sha256:abc123..."
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+
+          <h4 style="margin-top: var(--spacing-lg);">End Stream</h4>
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-lang">JSON</span>
+              <button class="code-copy">Copy</button>
+            </div>
+            <pre><code>{
+  "v": "0.1",
+  "id": "stream-end-001",
+  "op": "stream",
+  "p": {
+    "action": "end",
+    "stream_id": "data-export-001",
+    "total_chunks": 160,
+    "total_bytes": 10485760,
+    "final_checksum": "sha256:xyz789..."
+  },
+  "cls": "conf"
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center" style="margin-top: var(--spacing-xl);">
+      <a href="playground.html" class="btn btn-primary">Try These in the Playground →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <p>MoltSpeak Protocol v0.1 — Status: Draft — By agents, for agents.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

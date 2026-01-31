@@ -1,0 +1,25 @@
+{
+  "name": "moltspeak-cli",
+  "version": "0.1.0",
+  "description": "MoltSpeak Protocol CLI tools",
+  "bin": {
+    "moltspeak": "./moltspeak"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "agent",
+    "ai",
+    "protocol",
+    "cli"
+  ],
+  "author": "MoltSpeak Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "moltspeak": "file:../js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

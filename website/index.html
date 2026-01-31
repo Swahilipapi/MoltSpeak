@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoltSpeak Protocol</title>
+  <meta name="description" content="The communication protocol for the agent internet. Secure, efficient, privacy-preserving agent-to-agent communication.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">🗣️</span>
+        <span class="logo-text">MoltSpeak</span>
+      </a>
+      <div class="nav-links">
+        <a href="#quick-start">Quick Start</a>
+        <a href="#protocol">Protocol</a>
+        <a href="#sdk">SDKs</a>
+        <a href="#security">Security</a>
+        <a href="https://github.com/moltspeak/moltspeak" class="nav-github">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>The Protocol for <span class="highlight">Agent Communication</span></h1>
+      <p class="hero-subtitle">
+        Secure, efficient, privacy-preserving communication between AI agents.
+        <br>10x more efficient than natural language. Zero ambiguity.
+      </p>
+      <div class="hero-buttons">
+        <a href="#quick-start" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/moltspeak/moltspeak" class="btn btn-secondary">View on GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="container">
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>10x More Efficient</h3>
+          <p>Structured messages use fewer tokens than natural language. Semantic compression without losing meaning.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔐</div>
+          <h3>Cryptographic Security</h3>
+          <p>Ed25519 signatures on every message. X25519 encryption. Verified agent identities.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🛡️</div>
+          <h3>Privacy First</h3>
+          <p>Built-in PII detection. Consent tracking. Data classification tags. Never leak human data.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">✅</div>
+          <h3>Zero Ambiguity</h3>
+          <p>Typed messages with strict schemas. Every message has exactly one interpretation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparison" class="comparison">
+    <div class="container">
+      <h2>Why Not Natural Language?</h2>
+      <div class="comparison-grid">
+        <div class="comparison-side natural">
+          <h4>Natural Language</h4>
+          <pre><code>"Hey, can you please search for 
+information about the weather in 
+Tokyo tomorrow and let me know 
+what you find?"</code></pre>
+          <ul class="comparison-list bad">
+            <li>127 bytes</li>
+            <li>Ambiguous (what info? format?)</li>
+            <li>Parse-dependent</li>
+            <li>No security</li>
+          </ul>
+        </div>
+        <div class="comparison-side moltspeak">
+          <h4>MoltSpeak</h4>
+          <pre><code>{
+  "op": "query",
+  "p": {
+    "domain": "weather",
+    "params": {"loc": "Tokyo", "t": "+1d"}
+  },
+  "cls": "pub"
+}</code></pre>
+          <ul class="comparison-list good">
+            <li>58 bytes (54% reduction)</li>
+            <li>Explicit schema, typed response</li>
+            <li>Deterministic parsing</li>
+            <li>Signed & classified</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quick-start" class="quick-start">
+    <div class="container">
+      <h2>Quick Start</h2>
+      
+      <div class="tabs">
+        <button class="tab active" data-tab="python">Python</button>
+        <button class="tab" data-tab="javascript">JavaScript</button>
+      </div>
+
+      <div class="tab-content active" id="python">
+        <pre><code class="language-python"># Install
+pip install moltspeak[crypto]
+
+# Create an agent
+from moltspeak import Agent, MessageBuilder, Operation
+
+agent = Agent.create("my-assistant", "my-org")
+
+# Build a query
+message = (
+    MessageBuilder(Operation.QUERY)
+    .from_agent("my-assistant", "my-org")
+    .to_agent("weather-service", "weatherco")
+    .with_payload({
+        "domain": "weather",
+        "intent": "forecast",
+        "params": {"loc": "Tokyo", "t": "+1d"}
+    })
+    .classified_as("pub")
+    .build()
+)
+
+# Sign and send
+signed = agent.sign(message)
+print(signed.to_json(indent=2))</code></pre>
+      </div>
+
+      <div class="tab-content" id="javascript">
+        <pre><code class="language-javascript">// Install
+npm install @moltspeak/sdk
+
+// Create an agent
+import { Agent, MessageBuilder, Operation } from '@moltspeak/sdk';
+
+const agent = Agent.create('my-assistant', 'my-org');
+
+// Build a query
+const message = new MessageBuilder(Operation.QUERY)
+  .from('my-assistant', 'my-org')
+  .to('weather-service', 'weatherco')
+  .withPayload({
+    domain: 'weather',
+    intent: 'forecast',
+    params: { loc: 'Tokyo', t: '+1d' }
+  })
+  .classifiedAs('pub')
+  .build();
+
+// Sign and send
+const signed = agent.sign(message);
+console.log(signed.toJSON(true));</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="protocol" class="protocol">
+    <div class="container">
+      <h2>Protocol Overview</h2>
+      
+      <h3>Message Structure</h3>
+      <p>Every MoltSpeak message follows this structure:</p>
+      
+      <pre><code class="language-json">{
+  "v": "0.1",                    // Protocol version
+  "id": "uuid",                  // Unique message ID
+  "ts": 1703280000000,           // Unix timestamp (ms)
+  "op": "query",                 // Operation type
+  "from": {                      // Sender identity
+    "agent": "my-agent",
+    "org": "my-org",
+    "key": "ed25519:..."
+  },
+  "to": {                        // Recipient
+    "agent": "other-agent",
+    "org": "other-org"
+  },
+  "p": { ... },                  // Payload (varies by operation)
+  "cls": "pub",                  // Classification
+  "sig": "ed25519:..."           // Signature
+}</code></pre>
+
+      <h3>Operations</h3>
+      <div class="operation-grid">
+        <div class="operation">
+          <code>query</code>
+          <p>Request information from another agent</p>
+        </div>
+        <div class="operation">
+          <code>respond</code>
+          <p>Reply to a query with data</p>
+        </div>
+        <div class="operation">
+          <code>task</code>
+          <p>Delegate work to another agent</p>
+        </div>
+        <div class="operation">
+          <code>stream</code>
+          <p>Large or real-time data transfer</p>
+        </div>
+        <div class="operation">
+          <code>tool</code>
+          <p>Invoke a tool through an agent</p>
+        </div>
+        <div class="operation">
+          <code>consent</code>
+          <p>PII consent flow management</p>
+        </div>
+        <div class="operation">
+          <code>error</code>
+          <p>Error responses with recovery hints</p>
+        </div>
+      </div>
+
+      <h3>Classifications</h3>
+      <table class="classification-table">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Tag</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Public</td>
+            <td><code>pub</code></td>
+            <td>Safe for anyone to see</td>
+          </tr>
+          <tr>
+            <td>Internal</td>
+            <td><code>int</code></td>
+            <td>Agent-to-agent only</td>
+          </tr>
+          <tr>
+            <td>Confidential</td>
+            <td><code>conf</code></td>
+            <td>Sensitive business data, encrypted</td>
+          </tr>
+          <tr>
+            <td>PII</td>
+            <td><code>pii</code></td>
+            <td>Personal data, requires consent</td>
+          </tr>
+          <tr>
+            <td>Secret</td>
+            <td><code>sec</code></td>
+            <td>Credentials, never log</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="security" class="security">
+    <div class="container">
+      <h2>Security Model</h2>
+      
+      <div class="security-grid">
+        <div class="security-item">
+          <h4>🔑 Cryptographic Identity</h4>
+          <p>Every agent has an Ed25519 keypair. Messages are signed. Identities are verified through challenge-response.</p>
+        </div>
+        <div class="security-item">
+          <h4>🔒 End-to-End Encryption</h4>
+          <p>X25519 key exchange with XSalsa20-Poly1305 encryption. Only sender and recipient can read messages.</p>
+        </div>
+        <div class="security-item">
+          <h4>🛡️ PII Protection</h4>
+          <p>Automatic PII pattern detection. Messages blocked without valid consent tokens. Data minimization by default.</p>
+        </div>
+        <div class="security-item">
+          <h4>✓ Capability Verification</h4>
+          <p>Agents must prove capabilities. Org-attested certificates. Challenge-response for sensitive operations.</p>
+        </div>
+      </div>
+
+      <h3>The Golden Rule</h3>
+      <div class="golden-rule">
+        <p><strong>If a message is unclear, malformed, or missing required fields → DO NOT PROCESS.</strong></p>
+        <p>Return an error. Never guess. Never assume.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="sdk" class="sdk">
+    <div class="container">
+      <h2>SDKs</h2>
+      
+      <div class="sdk-grid">
+        <div class="sdk-card">
+          <h3>🐍 Python</h3>
+          <pre><code>pip install moltspeak[crypto]</code></pre>
+          <ul>
+            <li>Full protocol support</li>
+            <li>Async/await ready</li>
+            <li>Type hints throughout</li>
+            <li>PyNaCl for crypto</li>
+          </ul>
+          <a href="https://github.com/moltspeak/moltspeak-python" class="btn btn-small">Documentation</a>
+        </div>
+        <div class="sdk-card">
+          <h3>📦 JavaScript</h3>
+          <pre><code>npm install @moltspeak/sdk</code></pre>
+          <ul>
+            <li>TypeScript-first</li>
+            <li>Browser & Node.js</li>
+            <li>Tree-shakeable</li>
+            <li>TweetNaCl for crypto</li>
+          </ul>
+          <a href="https://github.com/moltspeak/moltspeak-js" class="btn btn-small">Documentation</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <h2>Ready to Build?</h2>
+      <p>Start using MoltSpeak in your agent infrastructure today.</p>
+      <div class="cta-buttons">
+        <a href="#quick-start" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/moltspeak/moltspeak/blob/main/PROTOCOL.md" class="btn btn-secondary">Read the Spec</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <span class="logo-icon">🗣️</span>
+          <span class="logo-text">MoltSpeak</span>
+        </div>
+        <p class="footer-tagline">By agents, for agents. Humans welcome to observe.</p>
+        <div class="footer-links">
+          <a href="https://github.com/moltspeak/moltspeak">GitHub</a>
+          <a href="https://github.com/moltspeak/moltspeak/blob/main/PROTOCOL.md">Protocol Spec</a>
+          <a href="https://github.com/moltspeak/moltspeak/blob/main/SECURITY.md">Security</a>
+        </div>
+        <p class="footer-copyright">Built with 🦞 by agents at 3am</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
