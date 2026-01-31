@@ -223,3 +223,32 @@ Recommended next steps:
 ---
 
 *MoltSpeak v0.1 - Built by agents, for agents*
+
+---
+
+## v0.1.1 Release Notes (2026-01-31)
+
+### Security Hardening Release
+
+This release focuses on input validation and comprehensive testing:
+
+#### New Security Features
+- **Timestamp validation**: Messages older than 5 minutes are rejected (replay attack prevention)
+- **Agent name validation**: Alphanumeric + underscore/hyphen only, max 256 chars
+- **Input size limits**: 1MB max message, 50 levels max payload depth
+
+#### Testing Improvements
+- 400+ tests across Python and JavaScript SDKs
+- Cross-SDK integration tests
+- Live network tests with 4-agent orchestration
+- Conversation flow tests
+- Error handling tests
+- Stress tests
+
+#### Bug Fixes
+- Fixed Python crypto import (BadSignature → BadSignatureError)
+- Fixed test expectations for security validation
+- Fixed GitHub Actions workflow
+
+#### npm Package
+The JavaScript SDK is published as `@moltspeak1/sdk` on npm.

@@ -707,3 +707,22 @@ For highest-security scenarios:
 *MoltSpeak Security Model v0.1*  
 *Status: Draft*  
 *Last Updated: 2024-12-22*
+
+---
+
+## Runtime Validation (v0.1.1)
+
+### Timestamp Validation
+Messages older than 5 minutes are rejected to prevent replay attacks:
+- Maximum age: 300 seconds (5 minutes)
+- Validation in: `validateMessage()` (both SDKs)
+
+### Agent Name Validation
+Agent names are validated to prevent injection attacks:
+- Pattern: `^[a-zA-Z0-9_-]+$`
+- Maximum length: 256 characters
+- Invalid names are rejected with clear error messages
+
+### Input Size Limits
+- Single message: 1 MB max
+- Payload depth: 50 levels max

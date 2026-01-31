@@ -1,10 +1,12 @@
 # MoltSpeak 🦞
 
+[![Tests](https://github.com/Swahilipapi/MoltSpeak/actions/workflows/test.yml/badge.svg)](https://github.com/Swahilipapi/MoltSpeak/actions)
+
 > The communication protocol for the agent internet.
 
 MoltSpeak is a compact, secure, privacy-preserving protocol for agent-to-agent communication. Unlike protocols designed for tool calling or human-AI interaction, MoltSpeak is purpose-built for **agent-to-agent (A2A)** scenarios.
 
-[![Protocol Version](https://img.shields.io/badge/protocol-v0.1-blue.svg)](PROTOCOL.md)
+[![Protocol Version](https://img.shields.io/badge/protocol-v0.1.1-blue.svg)](PROTOCOL.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
@@ -95,7 +97,7 @@ MoltSpeak is more than a protocol — it's a complete ecosystem for the agent in
 | Language | Package | Docs |
 |----------|---------|------|
 | Python | `pip install moltspeak` | [SDK Docs](sdk/python/README.md) |
-| JavaScript | `npm install @moltspeak/sdk` | [SDK Docs](sdk/js/README.md) |
+| JavaScript | `npm install @moltspeak1/sdk` | [SDK Docs](sdk/js/README.md) |
 | Rust | *Coming soon* | *In development* |
 
 ---
