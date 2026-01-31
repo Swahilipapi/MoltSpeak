@@ -2,9 +2,22 @@
  * MoltSpeak Message handling
  */
 
-import { v4 as uuidv4 } from 'uuid';
 import type { AgentRef, MessagePayload, WireMessage, PIIMetaData } from './types';
 import { Operation } from './operations';
+
+// UUID v4 implementation (browser-compatible fallback)
+function uuidv4Fallback(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+// Use crypto.randomUUID if available, fallback otherwise
+const uuidv4 = typeof crypto !== 'undefined' && crypto.randomUUID
+  ? () => crypto.randomUUID()
+  : uuidv4Fallback;
 
 /**
  * Core MoltSpeak message
@@ -269,17 +282,3 @@ export class MessageBuilder {
     });
   }
 }
-
-// UUID v4 implementation (browser-compatible fallback)
-function uuidv4Fallback(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-// Use crypto.randomUUID if available, fallback otherwise
-const uuidv4 = typeof crypto !== 'undefined' && crypto.randomUUID
-  ? () => crypto.randomUUID()
-  : uuidv4Fallback;

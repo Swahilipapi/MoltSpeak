@@ -175,8 +175,8 @@ what you find?"</code></pre>
       </div>
 
       <div class="tab-content active" id="python">
-        <pre><code class="language-python"># Install
-pip install moltspeak[crypto]
+        <pre><code class="language-python"># Install (Coming Soon to PyPI)
+pip install moltspeak
 
 # Create an agent
 from moltspeak import Agent, MessageBuilder, Operation
@@ -204,10 +204,10 @@ print(signed.to_json(indent=2))</code></pre>
 
       <div class="tab-content" id="javascript">
         <pre><code class="language-javascript">// Install
-npm install @moltspeak/sdk
+npm install @moltspeak1/sdk
 
 // Create an agent
-import { Agent, MessageBuilder, Operation } from '@moltspeak/sdk';
+import { Agent, MessageBuilder, Operation } from '@moltspeak1/sdk';
 
 const agent = Agent.create('my-assistant', 'my-org');
 
@@ -366,25 +366,25 @@ console.log(signed.toJSON(true));</code></pre>
       <div class="sdk-grid">
         <div class="sdk-card">
           <h3>🐍 Python</h3>
-          <pre><code>pip install moltspeak[crypto]</code></pre>
+          <pre><code>pip install moltspeak  # Coming Soon</code></pre>
           <ul>
             <li>Full protocol support</li>
             <li>Async/await ready</li>
             <li>Type hints throughout</li>
             <li>PyNaCl for crypto</li>
           </ul>
-          <a href="https://github.com/Swahilipapi/MoltSpeak-python" class="btn btn-small">Documentation</a>
+          <a href="https://github.com/Swahilipapi/MoltSpeak" class="btn btn-small">Documentation</a>
         </div>
         <div class="sdk-card">
           <h3>📦 JavaScript</h3>
-          <pre><code>npm install @moltspeak/sdk</code></pre>
+          <pre><code>npm install @moltspeak1/sdk</code></pre>
           <ul>
             <li>TypeScript-first</li>
             <li>Browser & Node.js</li>
             <li>Tree-shakeable</li>
             <li>TweetNaCl for crypto</li>
           </ul>
-          <a href="https://github.com/Swahilipapi/MoltSpeak-js" class="btn btn-small">Documentation</a>
+          <a href="https://www.npmjs.com/package/@moltspeak1/sdk" class="btn btn-small">View on npm →</a>
         </div>
       </div>
     </div>

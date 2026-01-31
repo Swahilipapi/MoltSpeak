@@ -29,6 +29,7 @@ export interface Query {
     schema?: string;
     fields?: string[];
   };
+  [key: string]: unknown;
 }
 
 /**
@@ -49,6 +50,7 @@ export interface Respond {
   status: 'success' | 'error' | 'partial';
   data: unknown;
   schema?: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -201,6 +203,7 @@ export interface ErrorPayload {
     data_types?: string[];
   };
   context?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 /**
