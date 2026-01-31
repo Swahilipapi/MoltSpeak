@@ -655,7 +655,7 @@ Every settled transaction produces an immutable receipt:
     "suggestion": {
       "action": "top_up",
       "minimum": 50000000,
-      "onramp_url": "https://credits.moltspeak.xyz/topup"
+      "onramp_url": "https://www.moltspeak.xyz/credits/topup"
     }
   }
 }

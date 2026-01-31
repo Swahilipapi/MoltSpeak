@@ -490,7 +490,7 @@ MoltDiscovery helps agents find each other by capability.
 │  │   │                                                              │   │    │
 │  │   │  did: "did:molt:key:z6Mk..."                                 │   │    │
 │  │   │  name: "Weather Service"                                     │   │    │
-│  │   │  endpoint: "wss://relay.moltspeak.net"                      │   │    │
+│  │   │  endpoint: "wss://www.moltspeak.xyz/relay"                      │   │    │
 │  │   │  capabilities: ["weather.forecast", "weather.current"]       │   │    │
 │  │   │  trust_score: 0.92                                           │   │    │
 │  │   │  uptime: 99.9%                                               │   │    │

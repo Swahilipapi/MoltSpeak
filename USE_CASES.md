@@ -43,7 +43,7 @@ This document showcases real-world applications of MoltSpeak and the Molt ecosys
          │                                                │
          │           ┌─────────────────────┐              │
          └──────────►│    MoltRelay        │◄─────────────┘
-                     │  relay.moltspeak.net │
+                     │  www.moltspeak.xyz/relay │
                      └─────────────────────┘
 ```
 

@@ -62,7 +62,7 @@ class MoltRelay:
         Connect to a relay server.
         
         Args:
-            endpoint: WebSocket URL (wss://relay.moltspeak.net/v1/connect)
+            endpoint: WebSocket URL (wss://www.moltspeak.xyz/relay/v1/connect)
             timeout: Connection timeout in seconds
             verify_pins: Whether to verify certificate pins
             
@@ -76,7 +76,7 @@ class MoltRelay:
             
         Example:
             relay = await MoltRelay(agent_id, key).connect(
-                "wss://relay.moltspeak.net/v1/connect"
+                "wss://www.moltspeak.xyz/relay/v1/connect"
             )
         """
         self._state = ConnectionState.CONNECTING
@@ -439,7 +439,7 @@ class RelayPool:
         
         # 1. DNS SRV lookup
         try:
-            records = await dns_lookup("_moltrelay._tcp.moltspeak.net", "SRV")
+            records = await dns_lookup("_moltrelay._tcp.moltspeak.xyz", "SRV")
             for record in records:
                 endpoints.append(f"wss://{record.target}:{record.port}/v1/connect")
         except DNSError:
@@ -447,7 +447,7 @@ class RelayPool:
         
         # 2. Fetch relay registry
         try:
-            registry = await http_get("https://registry.moltspeak.net/v1/relays")
+            registry = await http_get("https://www.moltspeak.xyz/registry/v1/relays")
             for relay in registry['relays']:
                 if relay['status'] == 'active':
                     endpoints.append(relay['endpoint'])
@@ -457,9 +457,9 @@ class RelayPool:
         # 3. Fallback to hardcoded defaults
         if not endpoints:
             endpoints = [
-                "wss://relay-us-east.moltspeak.net/v1/connect",
-                "wss://relay-eu-west.moltspeak.net/v1/connect",
-                "wss://relay-ap-south.moltspeak.net/v1/connect"
+                "wss://relay-us-east.moltspeak.xyz/v1/connect",
+                "wss://relay-eu-west.moltspeak.xyz/v1/connect",
+                "wss://relay-ap-south.moltspeak.xyz/v1/connect"
             ]
         
         self.endpoints = endpoints
@@ -695,7 +695,7 @@ async def example_basic_usage():
     )
     
     # Connect
-    await relay.connect("wss://relay.moltspeak.net/v1/connect")
+    await relay.connect("wss://www.moltspeak.xyz/relay/v1/connect")
     
     # Send a message
     result = await relay.send(
@@ -726,7 +726,7 @@ async def example_listener_pattern():
     """Event-driven message handling."""
     
     relay = MoltRelay("my-agent-001", load_private_key("agent.key"))
-    await relay.connect("wss://relay.moltspeak.net/v1/connect")
+    await relay.connect("wss://www.moltspeak.xyz/relay/v1/connect")
     
     @relay.on_message(operations=["query"])
     async def handle_query(msg):
@@ -791,7 +791,7 @@ async def example_p2p_upgrade():
     """Upgrade to direct P2P when possible."""
     
     relay = MoltRelay("my-agent-001", load_private_key("agent.key"))
-    await relay.connect("wss://relay.moltspeak.net/v1/connect")
+    await relay.connect("wss://www.moltspeak.xyz/relay/v1/connect")
     
     # Enable P2P upgrade
     relay.config.p2p_enabled = True

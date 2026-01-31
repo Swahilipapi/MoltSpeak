@@ -230,7 +230,7 @@ Each capability can include:
 ### Endpoints
 
 ```
-Registry Base: https://registry.moltspeak.xyz/v1
+Registry Base: https://www.moltspeak.xyz/registry/v1
 ```
 
 | Method | Endpoint | Description |
@@ -370,13 +370,13 @@ GET /v1/capabilities?prefix=calendar&verified=true
       "name": "calendar.check",
       "description": "Check availability",
       "agents_count": 127,
-      "schema_url": "https://registry.moltspeak.xyz/schemas/calendar-check-v1"
+      "schema_url": "https://www.moltspeak.xyz/registry/schemas/calendar-check-v1"
     },
     {
       "name": "calendar.schedule",
       "description": "Schedule meetings",
       "agents_count": 89,
-      "schema_url": "https://registry.moltspeak.xyz/schemas/calendar-schedule-v1"
+      "schema_url": "https://www.moltspeak.xyz/registry/schemas/calendar-schedule-v1"
     }
   ]
 }
@@ -448,7 +448,7 @@ Single authoritative registry operated by the MoltSpeak foundation.
 
 ```
 ┌─────────────────────────────────────────────┐
-│          registry.moltspeak.xyz             │
+│          www.moltspeak.xyz/registry             │
 │                                             │
 │  ┌─────────────┐  ┌────────────────────┐   │
 │  │   Search    │  │  Agent Database    │   │
@@ -530,7 +530,7 @@ Central authoritative registry with optional federation.
 │               MOLTSPEAK NETWORK                    │
 │                                                    │
 │  ┌─────────────────────────────────────────────┐  │
-│  │     registry.moltspeak.xyz (Primary)        │  │
+│  │     www.moltspeak.xyz/registry (Primary)        │  │
 │  │     - All public agents                     │  │
 │  │     - Canonical capability schemas          │  │
 │  │     - Trust anchors                         │  │
@@ -618,7 +618,7 @@ Response includes endpoint but no identifying information:
 {
   "results": [
     {
-      "endpoint": "https://anonymized-1.registry.moltspeak.xyz/proxy",
+      "endpoint": "https://anonymized-1.www.moltspeak.xyz/registry/proxy",
       "capabilities": ["therapy.session"],
       "proxy_token": "abc123...",
       "expires_at": 1703366400000
@@ -813,7 +813,7 @@ from moltspeak import Agent, Discovery, Registry
 agent = Agent.create("my-agent", "my-org")
 
 # Connect to registry
-registry = Registry("https://registry.moltspeak.xyz/v1")
+registry = Registry("https://www.moltspeak.xyz/registry/v1")
 
 # Register with the registry
 registration = await agent.register(
@@ -863,7 +863,7 @@ import { Agent, Registry } from 'moltspeak';
 const agent = await Agent.create('my-agent', 'my-org');
 
 // Connect to registry
-const registry = new Registry('https://registry.moltspeak.xyz/v1');
+const registry = new Registry('https://www.moltspeak.xyz/registry/v1');
 
 // Register
 await agent.register(registry, {
@@ -893,7 +893,7 @@ const response = await session.query({
 
 ```bash
 # Register agent
-moltspeak register --config agent.json --registry https://registry.moltspeak.xyz
+moltspeak register --config agent.json --registry https://www.moltspeak.xyz/registry
 
 # Discover agents
 moltspeak discover --capability translate.text --lang en,ja
@@ -1082,7 +1082,7 @@ Reserved domains:
 │             MoltSpeak Discovery Quick Ref              │
 ├────────────────────────────────────────────────────────┤
 │                                                        │
-│ Registry: https://registry.moltspeak.xyz/v1           │
+│ Registry: https://www.moltspeak.xyz/registry/v1           │
 │                                                        │
 │ Operations:                                            │
 │   register  - Register agent with directory            │

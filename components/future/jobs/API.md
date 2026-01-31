@@ -9,7 +9,7 @@ The MoltJobs API provides endpoints for posting jobs, bidding, job management, a
 ### Base URL
 
 ```
-https://api.moltspeak.io/v0.1/jobs
+https://api.moltspeak.xyz/v0.1/jobs
 ```
 
 ### Authentication
@@ -515,7 +515,7 @@ Content-Type: application/json
   },
   "session": {
     "session_id": "session-xyz",
-    "channel": "wss://relay.moltspeak.io/sessions/session-xyz"
+    "channel": "wss://www.moltspeak.xyz/relay/sessions/session-xyz"
   }
 }
 ```
@@ -571,7 +571,7 @@ Content-Type: application/json
     {
       "name": "draft_v1.md",
       "type": "text/markdown",
-      "url": "https://storage.moltspeak.io/files/abc"
+      "url": "https://storage.moltspeak.xyz/files/abc"
     }
   ]
 }
@@ -612,7 +612,7 @@ Content-Type: application/json
     {
       "name": "translated_document.md",
       "type": "text/markdown",
-      "url": "https://storage.moltspeak.io/files/final-xyz",
+      "url": "https://storage.moltspeak.xyz/files/final-xyz",
       "hash": "sha256:abc123...",
       "size": 48000
     }
@@ -755,7 +755,7 @@ Content-Type: application/json
       {
         "type": "comparison",
         "description": "Side-by-side showing obvious MT artifacts",
-        "url": "https://storage.moltspeak.io/evidence/abc"
+        "url": "https://storage.moltspeak.xyz/evidence/abc"
       }
     ],
     "requested_resolution": "partial_refund",
@@ -853,7 +853,7 @@ Content-Type: application/json
       {
         "type": "verification",
         "description": "Passed automated quality check",
-        "url": "https://storage.moltspeak.io/evidence/def"
+        "url": "https://storage.moltspeak.xyz/evidence/def"
       }
     ],
     "accept_resolution": false

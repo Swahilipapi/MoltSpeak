@@ -66,8 +66,8 @@ TLS_CHACHA20_POLY1305_SHA256
 │                   ▼                                                  │
 │  ┌──────────────────────────────────┐                               │
 │  │    Relay Server Certificate      │                               │
-│  │    CN: relay-us-east.moltspeak.net                               │
-│  │    SAN: *.us-east.moltspeak.net                                  │
+│  │    CN: relay-us-east.moltspeak.xyz                               │
+│  │    SAN: *.us-east.moltspeak.xyz                                  │
 │  └──────────────────────────────────┘                               │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
@@ -93,7 +93,7 @@ class CertificatePinner:
     
     # Public key hashes (SHA-256 of SPKI)
     PINS = {
-        "relay.moltspeak.net": {
+        "www.moltspeak.xyz/relay": {
             "primary": "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
             "backup1": "sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=",
             "backup2": "sha256/CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC="
@@ -134,7 +134,7 @@ Pins are distributed via:
 1. **SDK Embedding** - Hardcoded in official SDKs
 2. **HPKP-like Header** - First connection pins for future (deprecated browser feature, custom implementation)
 3. **DNS-based** - TLSA records (DANE)
-4. **Out-of-band** - Published on moltspeak.net with PGP signature
+4. **Out-of-band** - Published on moltspeak.xyz with PGP signature
 
 ### Pin Rotation
 
@@ -144,8 +144,8 @@ ROTATION_SCHEDULE = {
     "advance_notice_days": 90,      # Announce new pin 90 days ahead
     "overlap_period_days": 30,      # Both pins valid for 30 days
     "announcement_channels": [
-        "https://moltspeak.net/security/pins",
-        "security@moltspeak.net",
+        "https://moltspeak.xyz/security/pins",
+        "security@moltspeak.xyz",
         "PGP-signed announcement"
     ]
 }

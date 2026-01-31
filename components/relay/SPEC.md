@@ -26,7 +26,7 @@ MoltRelay provides the transport infrastructure for MoltSpeak messages, enabling
 WebSocket is the primary transport for real-time bidirectional communication.
 
 ```
-wss://relay.moltspeak.net/v1/connect
+wss://www.moltspeak.xyz/relay/v1/connect
 ```
 
 **Why WebSocket:**
@@ -40,8 +40,8 @@ wss://relay.moltspeak.net/v1/connect
 For environments where WebSocket is unavailable or for request-response patterns.
 
 ```
-POST https://relay.moltspeak.net/v1/send
-GET  https://relay.moltspeak.net/v1/receive (long-poll or SSE)
+POST https://www.moltspeak.xyz/relay/v1/send
+GET  https://www.moltspeak.xyz/relay/v1/receive (long-poll or SSE)
 ```
 
 **Use cases:**

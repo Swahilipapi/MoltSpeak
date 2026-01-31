@@ -585,7 +585,7 @@ Graceful connection shutdown:
   "error_code": 0,
   "message": "Server shutting down for maintenance",
   "reconnect_after_ms": 5000,
-  "alternate_relay": "wss://relay2.moltspeak.net/v1/connect"
+  "alternate_relay": "wss://relay2.moltspeak.xyz/v1/connect"
 }
 ```
 

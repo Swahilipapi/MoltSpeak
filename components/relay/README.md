@@ -88,7 +88,7 @@ from moltrelay import MoltRelay
 
 # Connect
 relay = await MoltRelay(agent_id, private_key).connect(
-    "wss://relay.moltspeak.net/v1/connect"
+    "wss://www.moltspeak.xyz/relay/v1/connect"
 )
 
 # Send

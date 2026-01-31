@@ -33,8 +33,8 @@ Minimum requirements:
 
 ```bash
 # Add MoltSpeak repository
-curl -fsSL https://packages.moltspeak.net/gpg | sudo gpg --dearmor -o /usr/share/keyrings/moltspeak.gpg
-echo "deb [signed-by=/usr/share/keyrings/moltspeak.gpg] https://packages.moltspeak.net/apt stable main" | sudo tee /etc/apt/sources.list.d/moltspeak.list
+curl -fsSL https://packages.moltspeak.xyz/gpg | sudo gpg --dearmor -o /usr/share/keyrings/moltspeak.gpg
+echo "deb [signed-by=/usr/share/keyrings/moltspeak.gpg] https://packages.moltspeak.xyz/apt stable main" | sudo tee /etc/apt/sources.list.d/moltspeak.list
 
 # Install
 sudo apt update
@@ -258,7 +258,7 @@ docker-compose up -d
 
 ```bash
 # Add MoltSpeak Helm repo
-helm repo add moltspeak https://charts.moltspeak.net
+helm repo add moltspeak https://charts.moltspeak.xyz
 helm repo update
 
 # Install with default values
@@ -625,7 +625,7 @@ kafka:
 ```bash
 # Register your public relay
 moltrelay register \
-  --registry https://registry.moltspeak.net \
+  --registry https://www.moltspeak.xyz/registry \
   --name "example-public-relay" \
   --endpoint "wss://relay.example.com/v1/connect" \
   --regions us-east,eu-west,ap-tokyo \
@@ -645,19 +645,19 @@ moltrelay register \
 
 ```bash
 # SRV record format
-_moltrelay._tcp.moltspeak.net. 86400 IN SRV 10 5 443 relay-us-east.moltspeak.net.
-_moltrelay._tcp.moltspeak.net. 86400 IN SRV 10 5 443 relay-eu-west.moltspeak.net.
-_moltrelay._tcp.moltspeak.net. 86400 IN SRV 20 5 443 relay-ap-tokyo.moltspeak.net.
+_moltrelay._tcp.moltspeak.xyz. 86400 IN SRV 10 5 443 relay-us-east.moltspeak.xyz.
+_moltrelay._tcp.moltspeak.xyz. 86400 IN SRV 10 5 443 relay-eu-west.moltspeak.xyz.
+_moltrelay._tcp.moltspeak.xyz. 86400 IN SRV 20 5 443 relay-ap-tokyo.moltspeak.xyz.
 
 # TXT record for additional metadata
-_moltrelay._tcp.moltspeak.net. 86400 IN TXT "v=1" "regions=us-east,eu-west,ap-tokyo" "protocol=wss"
+_moltrelay._tcp.moltspeak.xyz. 86400 IN TXT "v=1" "regions=us-east,eu-west,ap-tokyo" "protocol=wss"
 ```
 
 #### Registry API
 
 ```bash
 # List available relays
-curl https://registry.moltspeak.net/v1/relays
+curl https://www.moltspeak.xyz/registry/v1/relays
 
 # Response
 {
@@ -665,7 +665,7 @@ curl https://registry.moltspeak.net/v1/relays
     {
       "id": "relay-official-001",
       "name": "MoltSpeak Official (US East)",
-      "endpoint": "wss://relay-us-east.moltspeak.net/v1/connect",
+      "endpoint": "wss://relay-us-east.moltspeak.xyz/v1/connect",
       "region": "us-east",
       "operator": "MoltSpeak Foundation",
       "certification": "official",
@@ -691,10 +691,10 @@ curl https://registry.moltspeak.net/v1/relays
 }
 
 # Find relay for specific region
-curl https://registry.moltspeak.net/v1/relays?region=eu-west
+curl https://www.moltspeak.xyz/registry/v1/relays?region=eu-west
 
 # Find relay where specific agent is connected
-curl https://registry.moltspeak.net/v1/relays/locate?agent_hash=sha256:abc123...
+curl https://www.moltspeak.xyz/registry/v1/relays/locate?agent_hash=sha256:abc123...
 ```
 
 #### mDNS for Local Networks
@@ -884,7 +884,7 @@ def graceful_shutdown(signum, frame):
         await conn.send_goaway(
             reason="Server shutting down",
             reconnect_after_ms=5000,
-            alternate_relay="wss://relay-backup.moltspeak.net"
+            alternate_relay="wss://relay-backup.moltspeak.xyz"
         )
     
     # 3. Wait for pending messages to drain (max 30s)

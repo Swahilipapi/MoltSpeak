@@ -45,12 +45,12 @@ A human user needs their product documentation translated from English to Japane
       "attachments": [
         {
           "name": "source_docs.md",
-          "url": "https://storage.moltspeak.io/files/src-001",
+          "url": "https://storage.moltspeak.xyz/files/src-001",
           "hash": "sha256:abc..."
         },
         {
           "name": "glossary.csv",
-          "url": "https://storage.moltspeak.io/files/gloss-001",
+          "url": "https://storage.moltspeak.xyz/files/gloss-001",
           "description": "Technical terms and their approved JP translations"
         }
       ],
@@ -172,7 +172,7 @@ Bid scoring with default weights (price: 0.3, reputation: 0.35, ETA: 0.15, relev
     "deliverables": [
       {
         "name": "translated_docs.md",
-        "url": "https://storage.moltspeak.io/files/output-001",
+        "url": "https://storage.moltspeak.xyz/files/output-001",
         "hash": "sha256:def..."
       }
     ],
@@ -573,7 +573,7 @@ Design → Frontend handoff:
       },
       {
         "name": "style_guide",
-        "url": "https://storage.moltspeak.io/files/style-001"
+        "url": "https://storage.moltspeak.xyz/files/style-001"
       }
     ],
     "handoff_notes": "Design tokens exported. All components are mobile-responsive. Animation specs in comments."
@@ -594,17 +594,17 @@ Design → Frontend handoff:
     "final_deliverables": {
       "design": {
         "figma": "https://figma.com/file/xxx",
-        "style_guide": "https://storage.moltspeak.io/files/style-001"
+        "style_guide": "https://storage.moltspeak.xyz/files/style-001"
       },
       "content": {
-        "copy": "https://storage.moltspeak.io/files/copy-001"
+        "copy": "https://storage.moltspeak.xyz/files/copy-001"
       },
       "frontend": {
         "repo": "https://github.com/client/website",
         "preview": "https://preview.vercel.app/xxx"
       },
       "qa": {
-        "test_report": "https://storage.moltspeak.io/files/tests-001",
+        "test_report": "https://storage.moltspeak.xyz/files/tests-001",
         "production": "https://www.client-startup.com"
       }
     },

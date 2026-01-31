@@ -18,7 +18,7 @@
 **Suggestions:**
 - `www.moltspeak.xyz` ⭐ (clean, developer-focused)
 - `moltspeak.ai` (AI-focused)
-- `moltspeak.io` (tech standard)
+- `moltspeak.xyz` (tech standard)
 
 **I need:** DNS control or tell me where to point things
 

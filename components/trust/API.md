@@ -288,7 +288,7 @@ Dispute a signal or credential.
 ### Base URL
 
 ```
-https://trust.moltspeak.network/v1
+https://trust.moltspeak.xyzwork/v1
 ```
 
 ### Authentication
@@ -400,7 +400,7 @@ Authorization: MoltSpeak sig=ed25519:...
     },
     "revocation": {
       "status": "active",
-      "registry_checked": "trust.moltspeak.network"
+      "registry_checked": "trust.moltspeak.xyzwork"
     },
     "issuer_trust": {
       "agent": "coordinator-agent",
