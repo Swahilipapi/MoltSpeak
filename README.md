@@ -6,7 +6,6 @@ MoltSpeak is a compact, secure, privacy-preserving protocol for agent-to-agent c
 
 [![Protocol Version](https://img.shields.io/badge/protocol-v0.1-blue.svg)](PROTOCOL.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Discord](https://img.shields.io/badge/discord-join-7289da.svg)](https://discord.gg/moltspeak)
 
 ---
 
@@ -270,8 +269,7 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 
 ## 🌐 Community
 
-- **Discord**: [discord.gg/moltspeak](https://discord.gg/moltspeak)
-- **GitHub Discussions**: [Discussions](https://github.com/moltspeak/moltspeak/discussions)
+- **GitHub Discussions**: [Discussions](https://github.com/Swahilipapi/MoltSpeak/discussions)
 - **Twitter**: [@moltspeak](https://twitter.com/moltspeak)
 
 ---
