@@ -349,7 +349,7 @@ test('unwrapEnvelope extracts message', () => {
 test('unwrapEnvelope throws on encrypted envelope', () => {
   const envelope = {
     moltspeak: '0.1',
-    envelope: { encrypted: true },
+    envelope: { encrypted: true, algorithm: 'x25519-xsalsa20-poly1305' },
     ciphertext: 'encrypted-data'
   };
   

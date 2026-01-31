@@ -7,8 +7,12 @@ Run with: python test_moltspeak.py
 import json
 import re
 import sys
+import importlib.util
 
-import moltspeak
+# Import from moltspeak.py directly (not the package)
+spec = importlib.util.spec_from_file_location("moltspeak_standalone", "moltspeak.py")
+moltspeak = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(moltspeak)
 
 
 # ============================================================================
@@ -388,7 +392,7 @@ test("unwrap_envelope extracts message", test_unwrap_envelope)
 def test_unwrap_encrypted_throws():
     envelope = {
         "moltspeak": "0.1",
-        "envelope": {"encrypted": True},
+        "envelope": {"encrypted": True, "algorithm": "x25519-xsalsa20-poly1305"},
         "ciphertext": "encrypted-data"
     }
     assert_raises(

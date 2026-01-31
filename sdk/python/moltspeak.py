@@ -744,7 +744,7 @@ def encode(
 def decode(
     json_str: str,
     validate: bool = True,
-    unwrap_envelope: bool = True
+    should_unwrap: bool = True
 ) -> Dict[str, Any]:
     """
     Decode a JSON string to message.
@@ -752,7 +752,7 @@ def decode(
     Args:
         json_str: JSON string to decode
         validate: Validate after decoding
-        unwrap_envelope: Unwrap if envelope
+        should_unwrap: Unwrap if envelope
         
     Returns:
         Decoded message
@@ -768,9 +768,8 @@ def decode(
     # Check if it's an envelope
     message = data
     if "moltspeak" in data and "envelope" in data:
-        if unwrap_envelope:
-            from moltspeak import unwrap_envelope as unwrap_fn
-            message = unwrap_fn(data)
+        if should_unwrap:
+            message = unwrap_envelope(data)
         else:
             return data
     
