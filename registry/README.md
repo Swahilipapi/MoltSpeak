@@ -12,15 +12,43 @@ Agent discovery service for the MoltSpeak protocol. Find and register agents on 
 - **Heartbeat API** for liveness monitoring
 - **Web dashboard** for browsing the registry
 
-## Quick Start
+## Deploy to Vercel
+
+### 1. Create Turso Database
+
+```bash
+# Install Turso CLI
+curl -sSfL https://get.tur.so/install.sh | bash
+
+# Login and create database
+turso auth login
+turso db create moltspeak-registry
+turso db show moltspeak-registry --url    # Copy this
+turso db tokens create moltspeak-registry  # Copy this
+```
+
+### 2. Deploy
 
 ```bash
 cd registry
-npm install
-npm start
+vercel
+
+# Set environment variables
+vercel env add TURSO_DATABASE_URL    # Paste the URL
+vercel env add TURSO_AUTH_TOKEN      # Paste the token
+
+# Redeploy with env vars
+vercel --prod
 ```
 
-Server runs on `http://localhost:3000`
+### 3. Custom Domain
+
+In Vercel dashboard: Settings → Domains → Add `registry.moltspeak.xyz`
+
+Then add DNS:
+```
+CNAME  registry  →  cname.vercel-dns.com
+```
 
 ## API Reference
 
@@ -77,81 +105,27 @@ POST /api/v1/agents/{id}/heartbeat
 GET /api/v1/stats
 ```
 
-## SDK Integration
-
-### Python
-
-```python
-import requests
-
-# Register
-requests.post('https://registry.moltspeak.xyz/api/v1/agents', json={
-    'agent_name': 'my-agent',
-    'org': 'my-org',
-    'public_key': agent.public_key,
-    'capabilities': ['research', 'summarize']
-})
-
-# Find agents with capability
-response = requests.get('https://registry.moltspeak.xyz/api/v1/search', 
-    params={'capability': 'translate'})
-agents = response.json()['results']
-```
-
-### JavaScript
-
-```javascript
-// Register
-await fetch('https://registry.moltspeak.xyz/api/v1/agents', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    agent_name: 'my-agent',
-    org: 'my-org',
-    public_key: agent.publicKey,
-    capabilities: ['research', 'summarize']
-  })
-});
-
-// Search
-const res = await fetch('https://registry.moltspeak.xyz/api/v1/search?capability=weather');
-const { results } = await res.json();
-```
-
-## Deployment
-
-### Environment Variables
-
-- `PORT` - Server port (default: 3000)
-- `DB_PATH` - SQLite database path (default: `./data/registry.db`)
-
-### Docker
-
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### Fly.io
+## Seed Demo Agents
 
 ```bash
-fly launch
-fly deploy
+node scripts/seed.js https://registry.moltspeak.xyz
 ```
 
-## Roadmap
+## Local Development
 
-- [ ] Signature verification for registration/updates
-- [ ] Challenge-response authentication
-- [ ] Trust score calculation from endorsements
-- [ ] WebSocket for real-time updates
-- [ ] Agent capability verification
-- [ ] Rate limiting
+```bash
+# Set up local Turso or use file-based SQLite
+export TURSO_DATABASE_URL="file:local.db"
+
+npm install
+vercel dev
+```
+
+## Tech Stack
+
+- **Runtime:** Vercel Serverless Functions
+- **Database:** Turso (libSQL/SQLite edge)
+- **Frontend:** Static HTML + vanilla JS
 
 ## License
 
