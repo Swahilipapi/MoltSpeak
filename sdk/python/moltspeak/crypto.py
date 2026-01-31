@@ -14,7 +14,7 @@ try:
     from nacl.signing import SigningKey, VerifyKey
     from nacl.public import PrivateKey, PublicKey, Box
     from nacl.encoding import Base64Encoder
-    from nacl.exceptions import BadSignature
+    from nacl.exceptions import BadSignatureError as BadSignature
     NACL_AVAILABLE = True
 except ImportError:
     NACL_AVAILABLE = False

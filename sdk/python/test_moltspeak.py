@@ -676,20 +676,21 @@ test("None handling in payload", test_none_handling)
 print("\n🌍 Unicode Handling")
 
 def test_emoji_in_agent_names():
-    msg = moltspeak.create_query(
-        {"domain": "test"},
-        {"agent": "🤖-agent-🦀"},
-        {"agent": "🎯-target"}
+    # Build message without validation to test validate_message
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "🤖-agent-🦀"})
+        .to_agent({"agent": "🎯-target"})
+        .payload({"domain": "test"})
+        .build(validate=False)
     )
-    assert_equal(msg["from"]["agent"], "🤖-agent-🦀")
-    assert_equal(msg["to"]["agent"], "🎯-target")
     
-    # Round-trip through encode/decode
-    encoded = moltspeak.encode(msg)
-    decoded = moltspeak.decode(encoded)
-    assert_equal(decoded["from"]["agent"], "🤖-agent-🦀")
+    # Emoji agent names should be rejected by validation (security)
+    result = moltspeak.validate_message(msg, strict=True)
+    assert_false(result.valid, "Emoji agent names should be rejected")
+    assert_true(any("agent" in e or "name" in e or "character" in e for e in result.errors))
 
-test("emoji in agent names", test_emoji_in_agent_names)
+test("emoji in agent names rejected", test_emoji_in_agent_names)
 
 def test_cjk_characters():
     msg = moltspeak.create_query(
@@ -726,13 +727,14 @@ def test_mixed_unicode():
         .build(validate=False)
     )
     
-    encoded = moltspeak.encode(msg)
-    decoded = moltspeak.decode(encoded)
+    # Unicode agent names should be rejected by validation (security)
+    result = moltspeak.validate_message(msg, strict=True)
+    assert_false(result.valid, "Unicode agent names should be rejected")
+    assert_true(any("agent" in e or "name" in e for e in result.errors))
     
-    assert_equal(decoded["p"]["content"], "日本語 한국어 العربية עברית")
-    assert_equal(decoded["p"]["emoji"], "🎉🚀💡🔥")
+    # Note: Unicode in payload content is still allowed, just not in agent names
 
-test("mixed Unicode in all fields", test_mixed_unicode)
+test("mixed Unicode in agent names rejected", test_mixed_unicode)
 
 def test_rtl_text():
     msg = moltspeak.create_query(
@@ -1169,14 +1171,21 @@ test("multiple capabilities array handling", test_multiple_capabilities)
 
 def test_very_long_agent_name():
     long_name = "agent-" + "x" * 10000
-    msg = moltspeak.create_query(
-        {"domain": "test"},
-        {"agent": long_name},
-        {"agent": "receiver"}
+    # Build message without validation to test validate_message
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": long_name})
+        .to_agent({"agent": "receiver"})
+        .payload({"domain": "test"})
+        .build(validate=False)
     )
-    assert_equal(len(msg["from"]["agent"]), 10006)
+    
+    # Agent names > 256 chars should be rejected by validation (security)
+    result = moltspeak.validate_message(msg, strict=True)
+    assert_false(result.valid, "Agent names > 256 chars should be rejected")
+    assert_true(any("agent" in e or "length" in e or "256" in e for e in result.errors))
 
-test("very long agent name", test_very_long_agent_name)
+test("very long agent name rejected", test_very_long_agent_name)
 
 def test_special_chars_in_org():
     msg = moltspeak.create_query(

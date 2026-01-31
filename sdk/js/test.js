@@ -611,20 +611,18 @@ test('null and undefined handling in payload', () => {
 
 // Unicode Handling
 console.log('\n🌍 Unicode Handling');
-test('emoji in agent names', () => {
-  const msg = moltspeak.createQuery(
-    { domain: 'test' },
-    { agent: '🤖-agent-🦀' },
-    { agent: '🎯-target' }
-  );
+test('emoji in agent names rejected', () => {
+  // Build message without validation to test validateMessage
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: '🤖-agent-🦀' })
+    .to({ agent: '🎯-target' })
+    .payload({ domain: 'test' })
+    .build({ validate: false });
   
-  assertEqual(msg.from.agent, '🤖-agent-🦀');
-  assertEqual(msg.to.agent, '🎯-target');
-  
-  // Round-trip through encode/decode
-  const encoded = moltspeak.encode(msg);
-  const decoded = moltspeak.decode(encoded);
-  assertEqual(decoded.from.agent, '🤖-agent-🦀');
+  // Emoji agent names should be rejected by validation (security)
+  const result = moltspeak.validateMessage(msg, { strict: true });
+  assertFalse(result.valid, 'Emoji agent names should be rejected');
+  assertTrue(result.errors.some(e => e.includes('agent') || e.includes('name') || e.includes('character')));
 });
 
 test('CJK characters in payload', () => {
@@ -643,7 +641,7 @@ test('CJK characters in payload', () => {
   assertTrue(size > encoded.length); // UTF-8 multi-byte should be larger
 });
 
-test('mixed Unicode in all fields', () => {
+test('mixed Unicode in agent names rejected', () => {
   const msg = moltspeak.createMessage('query')
     .from({ agent: 'αβγ-agent', org: 'Организация' })
     .to({ agent: '代理人' })
@@ -654,11 +652,12 @@ test('mixed Unicode in all fields', () => {
     })
     .build({ validate: false });
   
-  const encoded = moltspeak.encode(msg);
-  const decoded = moltspeak.decode(encoded);
+  // Unicode agent names should be rejected by validation (security)
+  const result = moltspeak.validateMessage(msg, { strict: true });
+  assertFalse(result.valid, 'Unicode agent names should be rejected');
+  assertTrue(result.errors.some(e => e.includes('agent') || e.includes('name')));
   
-  assertEqual(decoded.p.content, '日本語 한국어 العربية עברית');
-  assertEqual(decoded.p.emoji, '🎉🚀💡🔥');
+  // Note: Unicode in payload content is still allowed, just not in agent names
 });
 
 test('RTL text handling', () => {
@@ -1046,15 +1045,19 @@ test('multiple capabilities array handling', () => {
   assertTrue(msg.cap.includes('cap3'));
 });
 
-test('very long agent name', () => {
+test('very long agent name rejected', () => {
   const longName = 'agent-' + 'x'.repeat(10000);
-  const msg = moltspeak.createQuery(
-    { domain: 'test' },
-    { agent: longName },
-    { agent: 'receiver' }
-  );
+  // Build message without validation to test validateMessage
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: longName })
+    .to({ agent: 'receiver' })
+    .payload({ domain: 'test' })
+    .build({ validate: false });
   
-  assertEqual(msg.from.agent.length, 10006);
+  // Agent names > 256 chars should be rejected by validation (security)
+  const result = moltspeak.validateMessage(msg, { strict: true });
+  assertFalse(result.valid, 'Agent names > 256 chars should be rejected');
+  assertTrue(result.errors.some(e => e.includes('agent') || e.includes('length') || e.includes('256')));
 });
 
 test('special characters in agent org', () => {
