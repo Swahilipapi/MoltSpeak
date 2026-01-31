@@ -4,6 +4,102 @@
 
 import type { AgentRef, MessagePayload, WireMessage, PIIMetaData } from './types';
 import { Operation } from './operations';
+import { ValidationError } from './errors';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Validation Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Maximum length for agent/org names */
+const MAX_NAME_LENGTH = 256;
+
+/** Maximum nesting depth for payload objects */
+const MAX_PAYLOAD_DEPTH = 50;
+
+/** Pattern for valid agent/org names: alphanumeric, dash, underscore */
+const NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Validation Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Validate and sanitize an agent or org name
+ * @throws ValidationError if name is invalid
+ */
+function validateName(name: string, field: string): string {
+  if (!name || typeof name !== 'string') {
+    throw new ValidationError(`${field} is required`, field);
+  }
+  
+  if (name.length > MAX_NAME_LENGTH) {
+    throw new ValidationError(
+      `${field} exceeds maximum length of ${MAX_NAME_LENGTH} characters`,
+      field
+    );
+  }
+  
+  if (!NAME_PATTERN.test(name)) {
+    throw new ValidationError(
+      `${field} contains invalid characters (only alphanumeric, dash, underscore allowed)`,
+      field
+    );
+  }
+  
+  return name;
+}
+
+/**
+ * Check the depth of a nested object/array structure
+ * @returns The maximum depth found
+ */
+function getPayloadDepth(obj: unknown, currentDepth = 0): number {
+  if (currentDepth > MAX_PAYLOAD_DEPTH) {
+    return currentDepth; // Short-circuit if already too deep
+  }
+  
+  if (obj === null || typeof obj !== 'object') {
+    return currentDepth;
+  }
+  
+  let maxDepth = currentDepth;
+  const values = Array.isArray(obj) ? obj : Object.values(obj);
+  
+  for (const value of values) {
+    const depth = getPayloadDepth(value, currentDepth + 1);
+    if (depth > maxDepth) {
+      maxDepth = depth;
+    }
+    if (maxDepth > MAX_PAYLOAD_DEPTH) {
+      break; // Short-circuit
+    }
+  }
+  
+  return maxDepth;
+}
+
+/**
+ * Validate payload depth doesn't exceed maximum
+ * @throws ValidationError if payload is too deeply nested
+ */
+function validatePayloadDepth(payload: MessagePayload): void {
+  const depth = getPayloadDepth(payload);
+  if (depth > MAX_PAYLOAD_DEPTH) {
+    throw new ValidationError(
+      `Payload exceeds maximum nesting depth of ${MAX_PAYLOAD_DEPTH} levels`,
+      'payload'
+    );
+  }
+}
+
+/**
+ * Validate an AgentRef structure
+ * @throws ValidationError if invalid
+ */
+function validateAgentRef(ref: AgentRef, role: 'sender' | 'recipient'): void {
+  validateName(ref.agent, `${role}.agent`);
+  validateName(ref.org, `${role}.org`);
+}
 
 // UUID v4 implementation (browser-compatible fallback)
 function uuidv4Fallback(): string {
@@ -52,7 +148,16 @@ export class Message {
     capabilitiesRequired?: string[];
     piiMeta?: PIIMetaData;
     extensions?: Record<string, unknown>;
+    /** Skip validation (use with caution, e.g., for trusted internal messages) */
+    skipValidation?: boolean;
   }) {
+    // Validate inputs unless explicitly skipped
+    if (!params.skipValidation) {
+      validateAgentRef(params.sender, 'sender');
+      validateAgentRef(params.recipient, 'recipient');
+      validatePayloadDepth(params.payload);
+    }
+    
     this.operation = params.operation;
     this.sender = params.sender;
     this.recipient = params.recipient;
@@ -130,6 +235,7 @@ export class Message {
 
   /**
    * Validate message structure
+   * @returns Array of validation error messages (empty if valid)
    */
   validate(): string[] {
     const errors: string[] = [];
@@ -139,6 +245,37 @@ export class Message {
     if (!this.operation) errors.push('Operation required');
     if (!this.sender) errors.push('Sender required');
     if (!this.recipient) errors.push('Recipient required');
+
+    // Validate sender agent/org names
+    if (this.sender) {
+      try {
+        validateAgentRef(this.sender, 'sender');
+      } catch (e) {
+        if (e instanceof ValidationError) {
+          errors.push(e.message);
+        }
+      }
+    }
+
+    // Validate recipient agent/org names
+    if (this.recipient) {
+      try {
+        validateAgentRef(this.recipient, 'recipient');
+      } catch (e) {
+        if (e instanceof ValidationError) {
+          errors.push(e.message);
+        }
+      }
+    }
+
+    // Validate payload depth
+    try {
+      validatePayloadDepth(this.payload);
+    } catch (e) {
+      if (e instanceof ValidationError) {
+        errors.push(e.message);
+      }
+    }
 
     const validCls = ['pub', 'int', 'conf', 'pii', 'sec'];
     if (!validCls.includes(this.classification)) {
@@ -174,24 +311,32 @@ export class MessageBuilder {
 
   /**
    * Set sender agent
+   * @throws ValidationError if agent or org names are invalid
    */
   from(agent: string, org: string, key?: string): this {
+    validateName(agent, 'sender.agent');
+    validateName(org, 'sender.org');
     this.sender = { agent, org, key };
     return this;
   }
 
   /**
    * Set recipient agent
+   * @throws ValidationError if agent or org names are invalid
    */
   to(agent: string, org: string): this {
+    validateName(agent, 'recipient.agent');
+    validateName(org, 'recipient.org');
     this.recipient = { agent, org };
     return this;
   }
 
   /**
    * Set message payload
+   * @throws ValidationError if payload exceeds maximum nesting depth
    */
   withPayload(payload: MessagePayload): this {
+    validatePayloadDepth(payload);
     this.payload = payload;
     return this;
   }
@@ -282,3 +427,17 @@ export class MessageBuilder {
     });
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Exported Validation Limits
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Validation limits for message fields */
+export const MessageLimits = {
+  /** Maximum length for agent/org names */
+  MAX_NAME_LENGTH,
+  /** Maximum nesting depth for payload objects */
+  MAX_PAYLOAD_DEPTH,
+  /** Pattern for valid agent/org names */
+  NAME_PATTERN,
+} as const;

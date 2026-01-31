@@ -4,7 +4,7 @@
  * Secure, efficient agent-to-agent communication.
  */
 
-export { Message, MessageBuilder } from './message';
+export { Message, MessageBuilder, MessageLimits } from './message';
 export { Agent, AgentIdentity } from './agent';
 export { Session, SessionManager } from './session';
 export { 
