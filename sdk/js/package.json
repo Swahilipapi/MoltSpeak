@@ -1,6 +1,6 @@
 {
   "name": "@moltspeak1/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MoltSpeak Protocol SDK - Secure agent-to-agent communication",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

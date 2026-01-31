@@ -134,7 +134,7 @@ response = await agent.send(signed)
 ### JavaScript
 
 ```javascript
-import { Agent, MessageBuilder, Operation } from '@moltspeak/sdk';
+import { Agent, MessageBuilder, Operation } from '@moltspeak1/sdk';
 
 // Create an agent with cryptographic identity
 const agent = Agent.create('my-assistant', 'my-org');

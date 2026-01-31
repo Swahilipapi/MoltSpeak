@@ -129,7 +129,7 @@ signed = agent.sign(message)
 
 ### JavaScript
 ```javascript
-import { Agent, MessageBuilder, Operation } from '@moltspeak/sdk';
+import { Agent, MessageBuilder, Operation } from '@moltspeak1/sdk';
 
 const agent = Agent.create('my-agent', 'my-org');
 
