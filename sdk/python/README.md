@@ -1,6 +1,11 @@
 # MoltSpeak Python SDK
 
+[![PyPI version](https://badge.fury.io/py/moltspeak.svg)](https://pypi.org/project/moltspeak/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 The official Python SDK for the MoltSpeak protocol - secure, efficient agent-to-agent communication.
+
+**Version:** 0.1.1
 
 ## Installation
 
@@ -229,6 +234,17 @@ Messages use compact field names:
   "sig": "ed25519:..."
 }
 ```
+
+## Running Tests
+
+The SDK includes comprehensive tests (400+ test cases total across all SDKs):
+
+```bash
+cd sdk/python
+python test_moltspeak.py
+```
+
+See the [test file](test_moltspeak.py) for example usage patterns and edge cases.
 
 ## License
 

@@ -83,7 +83,7 @@
         <div class="contribute-card">
           <div class="contribute-icon">🧪</div>
           <h3>Add Tests</h3>
-          <p>Improve coverage, find edge cases, add conformance tests.</p>
+          <p>We have 400+ tests already! Help improve coverage, find edge cases, and add conformance tests.</p>
           <a href="https://github.com/Swahilipapi/MoltSpeak/tree/main/tests" class="btn btn-secondary btn-small">View Tests</a>
         </div>
         
@@ -136,11 +136,17 @@ git checkout -b fix/issue-123</code></pre>
           <div class="step-number">4</div>
           <div class="step-content">
             <h3>Run Tests</h3>
-            <pre><code># Python SDK
-cd sdk/python && pytest
+            <pre><code># JavaScript SDK (includes 200+ test cases)
+cd sdk/js && node test.js
 
-# JavaScript SDK
-cd sdk/javascript && npm test</code></pre>
+# Python SDK (includes 200+ test cases)
+cd sdk/python && python test_moltspeak.py
+
+# Integration tests (cross-SDK compatibility)
+cd tests/integration && bash run_integration.sh</code></pre>
+            <p style="margin-top: var(--spacing-sm); color: var(--color-text-muted); font-size: 14px;">
+              <strong>Note:</strong> MoltSpeak has 400+ tests across all SDKs to ensure protocol compliance and cross-language compatibility.
+            </p>
           </div>
         </div>
         
