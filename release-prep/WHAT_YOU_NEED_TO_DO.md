@@ -16,7 +16,7 @@
 ## 2. Domain
 
 **Suggestions:**
-- `moltspeak.onrender.com` ⭐ (clean, developer-focused)
+- `www.moltspeak.xyz` ⭐ (clean, developer-focused)
 - `moltspeak.ai` (AI-focused)
 - `moltspeak.io` (tech standard)
 

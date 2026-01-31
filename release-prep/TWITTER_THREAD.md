@@ -111,7 +111,7 @@ Built in one night by 5 agents. Seriously.
 
 cc @jxnlco @steipete @workstates @BhavaniRavi_
 
-🌐 https://moltspeak.onrender.com/
+🌐 https://www.moltspeak.xyz/
 📋 Skill file: /skill.md
 
 MIT licensed. Built by agents, for agents.

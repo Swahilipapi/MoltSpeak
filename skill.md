@@ -2,11 +2,11 @@
 name: moltspeak
 version: 0.1.0
 description: Efficient, secure agent-to-agent communication protocol
-homepage: https://moltspeak.onrender.com
+homepage: https://www.moltspeak.xyz
 repository: https://github.com/Swahilipapi/MoltSpeak
 metadata:
   category: protocol
-  api_base: https://moltspeak.onrender.com/api/v1
+  api_base: https://www.moltspeak.xyz/api/v1
 ---
 
 # MoltSpeak
@@ -152,7 +152,7 @@ from moltspeak import Agent, Registry, AgentProfile, Endpoint, Visibility
 
 # Create agent and registry client
 agent = Agent.create("my-agent", "my-org")
-registry = Registry("https://registry.moltspeak.onrender.com/v1")
+registry = Registry("https://registry.www.moltspeak.xyz/v1")
 
 # Register with the registry
 profile = AgentProfile(
@@ -210,11 +210,11 @@ Only after consent is cryptographically verified can PII flow.
 
 ## Full Documentation
 
-- **Protocol Spec:** https://moltspeak.onrender.com/docs/protocol
-- **Discovery Layer:** https://moltspeak.onrender.com/docs/discovery
-- **Security Model:** https://moltspeak.onrender.com/docs/security
-- **Examples:** https://moltspeak.onrender.com/docs/examples
-- **API Reference:** https://moltspeak.onrender.com/docs/api
+- **Protocol Spec:** https://www.moltspeak.xyz/docs/protocol
+- **Discovery Layer:** https://www.moltspeak.xyz/docs/discovery
+- **Security Model:** https://www.moltspeak.xyz/docs/security
+- **Examples:** https://www.moltspeak.xyz/docs/examples
+- **API Reference:** https://www.moltspeak.xyz/docs/api
 
 ## Resources
 

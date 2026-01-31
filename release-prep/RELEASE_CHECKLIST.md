@@ -39,7 +39,7 @@ moltspeak/
 ## 2. Server & Domain
 
 ### Requirements
-- [ ] Domain: `moltspeak.onrender.com` or `moltspeak.ai` (suggestion)
+- [ ] Domain: `www.moltspeak.xyz` or `moltspeak.ai` (suggestion)
 - [ ] Server with Node.js for website
 - [ ] SSL certificate
 - [ ] Jarvis SSH access for maintenance
