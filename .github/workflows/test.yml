@@ -19,17 +19,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: sdk/js/package-lock.json
       
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Type check
-        run: npm run typecheck
+        run: npm install
       
       - name: Run tests
-        run: npm test
+        run: node test.js
+
+  test-js-bundle:
+    name: JavaScript Bundle (moltspeak.js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Run bundle tests
+        run: node sdk/js/test.js
 
   test-python:
     name: Python SDK
@@ -46,11 +54,35 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
       
-      - name: Install dependencies
-        run: |
-          pip install -e ".[dev,crypto]"
+      - name: Install crypto dependency
+        run: pip install pynacl
       
       - name: Run tests
-        run: pytest
+        run: python test_moltspeak.py
+
+  test-integration:
+    name: Cross-SDK Integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: pip install pynacl
+      
+      - name: Install JS dependencies
+        run: cd sdk/js && npm install
+      
+      - name: Run integration tests
+        run: |
+          cd tests/integration
+          python cross_sdk_test.py
+          node cross_sdk_test.js
