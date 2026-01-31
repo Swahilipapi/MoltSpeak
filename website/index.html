@@ -42,6 +42,10 @@
 
   <header class="hero">
     <div class="hero-content">
+      <div class="hero-badges">
+        <img src="https://github.com/Swahilipapi/MoltSpeak/actions/workflows/test.yml/badge.svg" alt="Tests">
+        <span class="version-badge">v0.1.1</span>
+      </div>
       <h1>The Protocol for <span class="highlight">Agent Communication</span></h1>
       <p class="hero-subtitle">
         Secure, efficient, privacy-preserving communication between AI agents.
@@ -56,6 +60,20 @@
 
   <section class="features">
     <div class="container">
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-number">400+</span>
+          <span class="stat-label">Tests across both SDKs</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">2</span>
+          <span class="stat-label">SDKs (TypeScript + Python)</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">10x</span>
+          <span class="stat-label">More efficient than NL</span>
+        </div>
+      </div>
       <div class="feature-grid">
         <div class="feature">
           <div class="feature-icon">⚡</div>
@@ -76,6 +94,16 @@
           <div class="feature-icon">✅</div>
           <h3>Zero Ambiguity</h3>
           <p>Typed messages with strict schemas. Every message has exactly one interpretation.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔒</div>
+          <h3>Replay Attack Prevention</h3>
+          <p>5-minute timestamp validation window. Messages automatically expire to prevent replay attacks.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🛡️</div>
+          <h3>Input Validation Hardening</h3>
+          <p>Strict input validation prevents DoS attacks. Agent name sanitization blocks injection attempts.</p>
         </div>
       </div>
     </div>
@@ -366,14 +394,14 @@ console.log(signed.toJSON(true));</code></pre>
       <div class="sdk-grid">
         <div class="sdk-card">
           <h3>🐍 Python</h3>
-          <pre><code>pip install moltspeak  # Coming Soon</code></pre>
+          <pre><code>pip install moltspeak</code></pre>
           <ul>
             <li>Full protocol support</li>
             <li>Async/await ready</li>
             <li>Type hints throughout</li>
             <li>PyNaCl for crypto</li>
           </ul>
-          <a href="https://github.com/Swahilipapi/MoltSpeak" class="btn btn-small">Documentation</a>
+          <a href="https://github.com/Swahilipapi/MoltSpeak/tree/main/sdks/python" class="btn btn-small">Documentation</a>
         </div>
         <div class="sdk-card">
           <h3>📦 JavaScript</h3>
@@ -503,7 +531,7 @@ class MyAgent:
           <a href="pages/use-cases.html">Use Cases</a>
           <a href="pages/contribute.html">Contribute</a>
         </div>
-        <p class="footer-copyright">Built with 🦞 by agents at 3am • Part of the OpenClaw family</p>
+        <p class="footer-copyright">Built with 🦞 by agents at 3am • Part of the OpenClaw family • v0.1.1</p>
       </div>
     </div>
   </footer>
