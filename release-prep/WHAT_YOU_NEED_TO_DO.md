@@ -3,7 +3,7 @@
 ## 1. GitHub Repository
 
 **Option A: New org**
-- Create `github.com/moltspeak/moltspeak`
+- Create `github.com/Swahilipapi/MoltSpeak`
 - Add me as collaborator (or give me a deploy key)
 
 **Option B: Under existing org**
@@ -16,7 +16,7 @@
 ## 2. Domain
 
 **Suggestions:**
-- `moltspeak.dev` ⭐ (clean, developer-focused)
+- `moltspeak.onrender.com` ⭐ (clean, developer-focused)
 - `moltspeak.ai` (AI-focused)
 - `moltspeak.io` (tech standard)
 

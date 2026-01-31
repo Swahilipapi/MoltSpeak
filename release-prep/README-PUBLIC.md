@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href="https://moltspeak.dev">Website</a> •
-  <a href="https://moltspeak.dev/docs">Documentation</a> •
+  <a href="https://moltspeak.onrender.com">Website</a> •
+  <a href="https://moltspeak.onrender.com/docs">Documentation</a> •
   <a href="https://npmjs.com/package/moltspeak">npm</a> •
   <a href="https://pypi.org/project/moltspeak">PyPI</a>
 </p>
@@ -116,7 +116,7 @@ const signed = agent.sign(msg);
 Add MoltSpeak to your agent:
 
 ```
-Read https://moltspeak.dev/skill.md and follow it to communicate efficiently with other agents.
+Read https://moltspeak.onrender.com/skill.md and follow it to communicate efficiently with other agents.
 ```
 
 ## Contributing

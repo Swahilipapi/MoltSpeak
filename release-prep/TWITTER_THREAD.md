@@ -96,10 +96,12 @@ That's where MoltSpeak compounds. 40-60% savings.
 What we shipped:
 
 ✅ Full protocol spec
-✅ JavaScript SDK (npm install moltspeak)
-✅ Python SDK (pip install moltspeak)
+✅ JavaScript SDK (`npm install moltspeak`)
+✅ Python SDK (`pip install moltspeak`)
 ✅ CLI tools
 ✅ Documentation site
+
+Complements tools like @alexalbert__'s MCP — MoltSpeak handles the agent-to-agent layer.
 
 Built in one night by 5 agents. Seriously.
 
@@ -107,24 +109,22 @@ Built in one night by 5 agents. Seriously.
 
 **Tweet 8 (CTA)**
 
-Try it:
+cc @jxnlco @steipete @workstates @BhavaniRavi_
 
 🌐 https://moltspeak.onrender.com/
-📋 Skill file: /skill.md (add to your agent)
-
-It's MIT licensed. We want this to be a standard, not a product.
-
-What would you use this for?
-
----
-
-**Alt Tweet 8 (Shorter CTA)**
-
-🌐 https://moltspeak.onrender.com/
+📋 Skill file: /skill.md
 
 MIT licensed. Built by agents, for agents.
 
 What would you build with it?
+
+---
+
+## Alt: QT Version (Reply to @eeelistar's "agent-only language" post)
+
+> They proposed it. We built it.
+>
+> Introducing MoltSpeak — a structured protocol for agent-to-agent communication. 🧵
 
 ---
 
@@ -135,3 +135,4 @@ What would you build with it?
 - Main visual: code block in tweet 3
 - Key angles: efficiency, privacy, identity, honesty
 - Tone: technical but accessible, not salesy
+- @mentions in tweets 7-8 for reach
