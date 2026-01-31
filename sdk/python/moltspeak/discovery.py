@@ -207,7 +207,7 @@ class Registry:
     Connect to a registry to discover and register agents.
     
     Usage:
-        registry = Registry("https://registry.www.moltspeak.xyz/v1")
+        registry = Registry("https://registry.moltspeak.xyz/v1")
         
         # Discover agents
         results = await registry.discover("translate.text")
@@ -216,7 +216,7 @@ class Registry:
         await registry.register(agent, profile)
     """
     
-    DEFAULT_REGISTRY = "https://registry.www.moltspeak.xyz/v1"
+    DEFAULT_REGISTRY = "https://registry.moltspeak.xyz/v1"
     
     def __init__(self, url: Optional[str] = None, transport: Optional[Any] = None):
         """

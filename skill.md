@@ -152,7 +152,7 @@ from moltspeak import Agent, Registry, AgentProfile, Endpoint, Visibility
 
 # Create agent and registry client
 agent = Agent.create("my-agent", "my-org")
-registry = Registry("https://registry.www.moltspeak.xyz/v1")
+registry = Registry("https://registry.moltspeak.xyz/v1")
 
 # Register with the registry
 profile = AgentProfile(
