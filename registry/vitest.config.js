@@ -1,10 +1,7 @@
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
+export default {
   test: {
-    testTimeout: 30000, // 30s timeout for API tests
+    testTimeout: 30000,
     hookTimeout: 30000,
-    globals: false,
     include: ['tests/**/*.test.js'],
   },
-});
+};
