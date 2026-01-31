@@ -289,6 +289,14 @@ function validateMessage(message, options = {}) {
     } else if (message.ts < 0) {
       result.valid = false;
       result.errors.push('Timestamp (ts) must be positive');
+    } else {
+      // Reject messages older than 5 minutes (replay attack prevention)
+      const MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+      const messageAge = now() - message.ts;
+      if (messageAge > MAX_AGE_MS) {
+        result.valid = false;
+        result.errors.push(`Message timestamp too old: ${Math.floor(messageAge / 1000)}s ago (max ${MAX_AGE_MS / 1000}s)`);
+      }
     }
   }
 
