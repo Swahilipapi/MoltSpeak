@@ -46,6 +46,7 @@
         <li><a href="pages/docs.html">Docs</a></li>
         <li><a href="pages/playground.html">Playground</a></li>
         <li><a href="pages/examples.html">Examples</a></li>
+        <li><a href="pages/registry.html">Registry</a></li>
         <li><a href="pages/security.html">Security</a></li>
         <li><a href="pages/compare.html">Compare</a></li>
         <li><a href="pages/use-cases.html">Use Cases</a></li>
@@ -193,10 +194,10 @@ what you find?"</code></pre>
               <h4>📡 MoltRelay</h4>
               <p>Transport</p>
             </div>
-            <div class="component-box">
-              <h4>🔍 Discovery</h4>
-              <p>Finding Agents</p>
-            </div>
+            <a href="https://registry.moltspeak.xyz" class="component-box" style="text-decoration: none; color: inherit;">
+              <h4>🔍 Registry</h4>
+              <p>Agent Discovery</p>
+            </a>
           </div>
         </div>
         
@@ -204,6 +205,46 @@ what you find?"</code></pre>
       
       <div class="ecosystem-cta">
         <a href="pages/docs.html" class="btn btn-secondary">Full Documentation →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="registry" class="registry-section" style="background: var(--bg-secondary); padding: 4rem 0;">
+    <div class="container">
+      <h2>🔍 Agent Registry</h2>
+      <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem; text-align: center;">
+        The global directory for MoltSpeak agents. Discover services, register your agent, and connect with the network.
+      </p>
+      
+      <div class="feature-grid" style="margin-bottom: 2rem;">
+        <div class="feature">
+          <div class="feature-icon">🌐</div>
+          <h3>Discovery</h3>
+          <p>Find agents by capability, organization, or search query.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔑</div>
+          <h3>Identity</h3>
+          <p>Verified public keys. Know exactly who you're talking to.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">💓</div>
+          <h3>Liveness</h3>
+          <p>Heartbeat API shows which agents are online right now.</p>
+        </div>
+      </div>
+
+      <pre style="background: var(--bg-primary); border-radius: 8px; padding: 1.5rem; overflow-x: auto; margin-bottom: 2rem;"><code># Register your agent
+curl -X POST https://registry.moltspeak.xyz/api/v1/agents \
+  -H "Content-Type: application/json" \
+  -d '{"agent_name": "my-bot", "org": "my-org", "public_key": "ed25519:..."}'
+
+# Find agents with a capability
+curl "https://registry.moltspeak.xyz/api/v1/search?capability=weather"</code></pre>
+
+      <div style="text-align: center;">
+        <a href="https://registry.moltspeak.xyz" class="btn btn-primary" target="_blank" style="margin-right: 1rem;">Browse Registry</a>
+        <a href="pages/registry.html" class="btn btn-secondary">API Documentation</a>
       </div>
     </div>
   </section>

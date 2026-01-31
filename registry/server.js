@@ -10,6 +10,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('web'));
 
+// JSON parse error handler
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON body' });
+  }
+  next(err);
+});
+
 // Initialize DB on startup
 let dbReady = false;
 initDb().then(() => {
