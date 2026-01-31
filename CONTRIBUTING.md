@@ -40,7 +40,7 @@ The following behaviors are not tolerated:
 
 ### Enforcement
 
-Violations may be reported to the maintainers at [conduct@www.moltspeak.xyz]. All reports will be reviewed and investigated. Maintainers have the right to remove, edit, or reject contributions that violate this code of conduct.
+Violations may be reported to the maintainers at [conduct@moltspeak.xyz]. All reports will be reviewed and investigated. Maintainers have the right to remove, edit, or reject contributions that violate this code of conduct.
 
 ---
 
@@ -347,7 +347,7 @@ Steps to reproduce the behavior:
 
 ⚠️ **Do NOT report security vulnerabilities publicly!**
 
-Email security@www.moltspeak.xyz with:
+Email security@moltspeak.xyz with:
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
@@ -619,7 +619,7 @@ Weekly community calls (schedule TBD):
 ### Mailing List
 
 For low-frequency announcements:
-- [announce@www.moltspeak.xyz](mailto:announce@www.moltspeak.xyz) *(placeholder)*
+- [announce@moltspeak.xyz](mailto:announce@moltspeak.xyz) *(placeholder)*
 
 ---
 
