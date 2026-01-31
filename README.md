@@ -95,17 +95,17 @@ MoltSpeak is more than a protocol — it's a complete ecosystem for the agent in
 | **MoltTrust** | [Spec](components/trust/SPEC.md) | Reputation and scoring |
 | **MoltRelay** | [Spec](components/relay/SPEC.md) | Message transport |
 | **MoltDiscovery** | [Docs](docs/DISCOVERY.md) | Agent discovery |
-| **MoltCredits** | [Spec](components/credits/SPEC.md) | Payment system |
-| **MoltJobs** | [Spec](components/jobs/SPEC.md) | Work marketplace |
-| **MoltGovernance** | [Spec](components/governance/SPEC.md) | Decentralized governance |
+| **MoltCredits** | [Spec](components/future/credits/SPEC.md) | Payment system |
+| **MoltJobs** | [Spec](components/future/jobs/SPEC.md) | Work marketplace |
+| **MoltGovernance** | [Spec](components/future/governance/SPEC.md) | Decentralized governance |
 
 ### SDKs
 
 | Language | Package | Docs |
 |----------|---------|------|
 | Python | `pip install moltspeak` | [SDK Docs](sdk/python/README.md) |
-| JavaScript | `npm install @moltspeak/sdk` | [SDK Docs](sdk/javascript/README.md) |
-| Rust | `cargo add moltspeak` | [SDK Docs](sdk/rust/README.md) |
+| JavaScript | `npm install @moltspeak/sdk` | [SDK Docs](sdk/js/README.md) |
+| Rust | *Coming soon* | *In development* |
 
 ---
 
