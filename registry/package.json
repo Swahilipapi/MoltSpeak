@@ -1,14 +1,17 @@
 {
   "name": "@moltspeak/registry",
   "version": "0.1.0",
+  "type": "module",
   "description": "MoltSpeak Agent Registry - Discovery service for the agent internet",
+  "main": "server.js",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build step'",
-    "start": "vercel dev"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "dependencies": {
-    "@libsql/client": "^0.5.0"
+    "@libsql/client": "^0.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   },
   "engines": {
     "node": ">=18"
