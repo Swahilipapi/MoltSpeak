@@ -67,6 +67,21 @@ export class ConsentError extends MoltSpeakError {
 }
 
 /**
+ * PII handling error (detection, redaction, or policy violation)
+ */
+export class PIIError extends MoltSpeakError {
+  detectedTypes: string[];
+  action?: 'block' | 'redact' | 'warn';
+
+  constructor(message: string, detectedTypes: string[] = [], action?: 'block' | 'redact' | 'warn') {
+    super(message, 'E_PII', true);
+    this.name = 'PIIError';
+    this.detectedTypes = detectedTypes;
+    this.action = action;
+  }
+}
+
+/**
  * Rate limit exceeded
  */
 export class RateLimitError extends MoltSpeakError {
