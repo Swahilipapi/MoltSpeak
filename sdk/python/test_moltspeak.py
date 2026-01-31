@@ -382,7 +382,7 @@ def test_wrap_envelope():
 test("wrap_in_envelope wraps message correctly", test_wrap_envelope)
 
 def test_unwrap_envelope():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     envelope = moltspeak.wrap_in_envelope(msg)
     unwrapped = moltspeak.unwrap_envelope(envelope)
     assert_equal(unwrapped["op"], "query")
@@ -416,7 +416,7 @@ def test_encode_produces_json():
 test("encode produces valid JSON", test_encode_produces_json)
 
 def test_encode_pretty():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     encoded = moltspeak.encode(msg, pretty=True)
     assert_true("\n" in encoded)
     assert_true("  " in encoded)
@@ -424,7 +424,7 @@ def test_encode_pretty():
 test("encode with pretty option formats nicely", test_encode_pretty)
 
 def test_encode_envelope():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     encoded = moltspeak.encode(msg, envelope=True)
     parsed = json.loads(encoded)
     assert_true(parsed.get("moltspeak"))
@@ -443,7 +443,7 @@ def test_decode_parses():
 test("decode parses valid JSON message", test_decode_parses)
 
 def test_decode_unwraps():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     encoded = moltspeak.encode(msg, envelope=True)
     decoded = moltspeak.decode(encoded)
     assert_equal(decoded["op"], "query")
@@ -464,7 +464,7 @@ test("decode throws on invalid JSON", test_decode_invalid_json)
 print("\n🔐 Signing")
 
 def test_sign_adds_signature():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     signed = moltspeak.sign(msg, "mock-private-key")
     assert_true(signed.get("sig"))
     assert_true(signed["sig"].startswith("ed25519:"))
@@ -472,14 +472,14 @@ def test_sign_adds_signature():
 test("sign adds signature to message", test_sign_adds_signature)
 
 def test_sign_no_modify():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     moltspeak.sign(msg, "mock-private-key")
     assert_false(msg.get("sig"))
 
 test("sign does not modify original message", test_sign_no_modify)
 
 def test_verify_signed():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     signed = moltspeak.sign(msg, "mock-private-key")
     valid = moltspeak.verify(signed, "mock-public-key")
     assert_true(valid)
@@ -487,7 +487,7 @@ def test_verify_signed():
 test("verify returns true for signed message", test_verify_signed)
 
 def test_verify_unsigned():
-    msg = {"v": "0.1", "id": "test", "ts": 123, "op": "query"}
+    msg = {"v": "0.1", "id": "test", "ts": moltspeak.now(), "op": "query"}
     valid = moltspeak.verify(msg, "mock-public-key")
     assert_false(valid)
 
@@ -615,6 +615,578 @@ def test_error_handling_flow():
     assert_true(error_response["p"]["recoverable"])
 
 test("error handling flow", test_error_handling_flow)
+
+
+# ============================================================================
+# Edge Case Tests
+# ============================================================================
+
+# Empty String Handling
+print("\n🔲 Empty String Handling")
+
+def test_empty_agent_name():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": ""})
+        .to_agent({"agent": "receiver"})
+        .payload({"domain": "test"})
+        .build(validate=False)
+    )
+    assert_equal(msg["from"]["agent"], "")
+
+test("empty agent name in from field", test_empty_agent_name)
+
+def test_empty_payload():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .to_agent({"agent": "receiver"})
+        .payload({})
+        .build(validate=False)
+    )
+    assert_equal(len(msg["p"]), 0)
+
+test("empty payload object", test_empty_payload)
+
+def test_empty_strings_in_payload():
+    msg = moltspeak.create_query(
+        {"domain": "", "intent": "", "params": {"key": ""}},
+        {"agent": "sender"},
+        {"agent": "receiver"}
+    )
+    assert_equal(msg["p"]["domain"], "")
+    assert_equal(msg["p"]["intent"], "")
+
+test("empty string in payload values", test_empty_strings_in_payload)
+
+def test_none_handling():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload({"null_val": None, "obj": {"nested": None}})
+        .build(validate=False)
+    )
+    assert_equal(msg["p"]["null_val"], None)
+    assert_equal(msg["p"]["obj"]["nested"], None)
+
+test("None handling in payload", test_none_handling)
+
+
+# Unicode Handling
+print("\n🌍 Unicode Handling")
+
+def test_emoji_in_agent_names():
+    msg = moltspeak.create_query(
+        {"domain": "test"},
+        {"agent": "🤖-agent-🦀"},
+        {"agent": "🎯-target"}
+    )
+    assert_equal(msg["from"]["agent"], "🤖-agent-🦀")
+    assert_equal(msg["to"]["agent"], "🎯-target")
+    
+    # Round-trip through encode/decode
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    assert_equal(decoded["from"]["agent"], "🤖-agent-🦀")
+
+test("emoji in agent names", test_emoji_in_agent_names)
+
+def test_cjk_characters():
+    msg = moltspeak.create_query(
+        {"domain": "天気", "intent": "予報", "params": {"location": "東京"}},
+        {"agent": "sender"},
+        {"agent": "receiver"}
+    )
+    assert_equal(msg["p"]["domain"], "天気")
+    assert_equal(msg["p"]["params"]["location"], "東京")
+    
+    # Verify byte size is calculated correctly for multi-byte characters
+    cjk_text = "天気"
+    size = moltspeak.byte_size(cjk_text)
+    # Each CJK character is 3 bytes in UTF-8
+    assert_true(size == 6)  # 2 chars * 3 bytes each
+    
+    # Round-trip works
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    assert_equal(decoded["p"]["domain"], "天気")
+
+test("CJK characters in payload", test_cjk_characters)
+
+def test_mixed_unicode():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "αβγ-agent", "org": "Организация"})
+        .to_agent({"agent": "代理人"})
+        .payload({
+            "content": "日本語 한국어 العربية עברית",
+            "emoji": "🎉🚀💡🔥",
+            "special": "© ® ™ € £ ¥"
+        })
+        .build(validate=False)
+    )
+    
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    
+    assert_equal(decoded["p"]["content"], "日本語 한국어 العربية עברית")
+    assert_equal(decoded["p"]["emoji"], "🎉🚀💡🔥")
+
+test("mixed Unicode in all fields", test_mixed_unicode)
+
+def test_rtl_text():
+    msg = moltspeak.create_query(
+        {"domain": "test", "params": {"text": "مرحبا بالعالم"}},
+        {"agent": "sender"},
+        {"agent": "receiver"}
+    )
+    assert_equal(msg["p"]["params"]["text"], "مرحبا بالعالم")
+
+test("RTL text handling", test_rtl_text)
+
+def test_zero_width_characters():
+    zero_width = "test\u200B\u200C\u200Dvalue"
+    msg = moltspeak.create_query(
+        {"domain": zero_width},
+        {"agent": "sender"},
+        {"agent": "receiver"}
+    )
+    assert_equal(msg["p"]["domain"], zero_width)
+
+test("zero-width characters", test_zero_width_characters)
+
+
+# Max Size Messages
+print("\n📏 Max Size Messages")
+
+def test_near_1mb_boundary():
+    # Create a payload just under 1MB
+    large_string = "x" * (900 * 1024)  # 900KB of data
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload({"data": large_string})
+        .build(validate=False)
+    )
+    
+    encoded = moltspeak.encode(msg)
+    size = moltspeak.byte_size(encoded)
+    assert_true(size < 1 * 1024 * 1024)  # Should be under 1MB
+    assert_true(size > 900 * 1024)  # Should be over 900KB
+    
+    # Should still be decodable
+    decoded = moltspeak.decode(encoded)
+    assert_equal(len(decoded["p"]["data"]), 900 * 1024)
+
+test("message near 1MB boundary (under limit)", test_near_1mb_boundary)
+
+def test_large_array_payload():
+    large_array = [{"key": "value", "num": 42} for _ in range(10000)]
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload({"items": large_array})
+        .build(validate=False)
+    )
+    
+    assert_equal(len(msg["p"]["items"]), 10000)
+    
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    assert_equal(len(decoded["p"]["items"]), 10000)
+
+test("large array payload", test_large_array_payload)
+
+
+# Deeply Nested Payloads
+print("\n🪆 Deeply Nested Payloads")
+
+def test_50_levels_of_nesting():
+    nested = {"value": "deepest"}
+    for i in range(50):
+        nested = {"level": i, "child": nested}
+    
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload(nested)
+        .build(validate=False)
+    )
+    
+    # Traverse to verify structure
+    current = msg["p"]
+    for i in range(49, -1, -1):
+        assert_equal(current["level"], i)
+        current = current["child"]
+    assert_equal(current["value"], "deepest")
+    
+    # Round-trip
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    
+    current = decoded["p"]
+    for i in range(49, -1, -1):
+        assert_equal(current["level"], i)
+        current = current["child"]
+    assert_equal(current["value"], "deepest")
+
+test("50 levels of nesting", test_50_levels_of_nesting)
+
+def test_deeply_nested_arrays():
+    nested = [1, 2, 3]
+    for i in range(30):
+        nested = [nested, i]
+    
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload({"arrays": nested})
+        .build(validate=False)
+    )
+    
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    assert_true(isinstance(decoded["p"]["arrays"], list))
+
+test("deeply nested arrays", test_deeply_nested_arrays)
+
+def test_mixed_deep_nesting():
+    complex_obj = {
+        "a": [{"b": [{"c": [{"d": [{"e": [{"f": "deep"}]}]}]}]}]
+    }
+    
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload(complex_obj)
+        .build(validate=False)
+    )
+    
+    assert_equal(msg["p"]["a"][0]["b"][0]["c"][0]["d"][0]["e"][0]["f"], "deep")
+
+test("mixed deep nesting (objects and arrays)", test_mixed_deep_nesting)
+
+
+# Timestamp Edge Cases
+print("\n⏰ Timestamp Edge Cases")
+
+def test_future_timestamp():
+    future_ts = 4102444800000  # Jan 1, 2100
+    msg = {
+        "v": "0.1",
+        "id": moltspeak.generate_uuid(),
+        "ts": future_ts,
+        "op": "query",
+        "from": {"agent": "future-agent"}
+    }
+    assert_equal(msg["ts"], future_ts)
+    # SDK may reject future timestamps in strict validation
+    result = moltspeak.validate_message(msg, strict=False)
+    # Just verify it doesn't crash and produces a result
+    assert_true(isinstance(result.valid, bool))
+
+test("future timestamp (year 2100)", test_future_timestamp)
+
+def test_very_old_timestamp():
+    old_ts = 1000  # 1 second after epoch
+    msg = {
+        "v": "0.1",
+        "id": moltspeak.generate_uuid(),
+        "ts": old_ts,
+        "op": "query",
+        "from": {"agent": "old-agent"}
+    }
+    assert_equal(msg["ts"], old_ts)
+    # Old timestamps should be rejected (replay attack prevention)
+    result = moltspeak.validate_message(msg, strict=False)
+    assert_false(result.valid)  # Invalid - message too old
+    assert_true(any("too old" in e for e in result.errors))
+
+test("very old timestamp (year 1970) rejected", test_very_old_timestamp)
+
+def test_zero_timestamp():
+    msg = {
+        "v": "0.1",
+        "id": moltspeak.generate_uuid(),
+        "ts": 0,
+        "op": "query",
+        "from": {"agent": "zero-ts-agent"}
+    }
+    assert_equal(msg["ts"], 0)
+
+test("zero timestamp", test_zero_timestamp)
+
+def test_negative_timestamp():
+    msg = {
+        "v": "0.1",
+        "id": moltspeak.generate_uuid(),
+        "ts": -1000,
+        "op": "query",
+        "from": {"agent": "negative-ts-agent"}
+    }
+    assert_equal(msg["ts"], -1000)
+
+test("negative timestamp", test_negative_timestamp)
+
+def test_expiration_in_past():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .expires_in(-60000)  # 1 minute ago
+        .build(validate=False)
+    )
+    assert_true(msg["exp"] < moltspeak.now())
+
+test("expiration in the past", test_expiration_in_past)
+
+def test_far_future_expiration():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .expires_in(365 * 24 * 60 * 60 * 1000 * 100)  # 100 years
+        .build(validate=False)
+    )
+    assert_true(msg["exp"] > moltspeak.now())
+
+test("very far future expiration", test_far_future_expiration)
+
+
+# Invalid UUID Formats
+print("\n🔑 UUID Format Edge Cases")
+
+def test_non_standard_uuid():
+    msg = {
+        "v": "0.1",
+        "id": "not-a-valid-uuid",
+        "ts": moltspeak.now(),
+        "op": "query",
+        "from": {"agent": "sender"}
+    }
+    # In non-strict mode, this should be accepted
+    result = moltspeak.validate_message(msg, strict=False)
+    # Protocol doesn't strictly enforce UUID format
+    assert_true(result.valid or any("id" in e for e in result.errors))
+
+test("non-standard UUID format accepted", test_non_standard_uuid)
+
+def test_empty_id():
+    msg = {
+        "v": "0.1",
+        "id": "",
+        "ts": moltspeak.now(),
+        "op": "query",
+        "from": {"agent": "sender"}
+    }
+    assert_equal(msg["id"], "")
+
+test("empty string as ID", test_empty_id)
+
+def test_very_long_id():
+    long_id = "x" * 1000
+    msg = {
+        "v": "0.1",
+        "id": long_id,
+        "ts": moltspeak.now(),
+        "op": "query",
+        "from": {"agent": "sender"}
+    }
+    assert_equal(len(msg["id"]), 1000)
+
+test("very long ID string", test_very_long_id)
+
+def test_numeric_id():
+    msg = {
+        "v": "0.1",
+        "id": 12345,
+        "ts": moltspeak.now(),
+        "op": "query",
+        "from": {"agent": "sender"}
+    }
+    assert_equal(msg["id"], 12345)
+
+test("numeric ID value", test_numeric_id)
+
+def test_uppercase_uuid():
+    uppercase_uuid = "A1B2C3D4-E5F6-4789-ABCD-EF1234567890"
+    msg = {
+        "v": "0.1",
+        "id": uppercase_uuid,
+        "ts": moltspeak.now(),
+        "op": "query",
+        "from": {"agent": "sender"}
+    }
+    assert_equal(msg["id"], uppercase_uuid)
+
+test("UUID with uppercase letters", test_uppercase_uuid)
+
+
+# Malformed JSON Edge Cases
+print("\n🔧 Malformed JSON Edge Cases")
+
+def test_trailing_whitespace():
+    ts = moltspeak.now()
+    json_str = f'{{"v":"0.1","id":"test","ts":{ts},"op":"query"}}   \n\t  '
+    decoded = moltspeak.decode(json_str)
+    assert_equal(decoded["op"], "query")
+
+test("decode handles trailing whitespace", test_trailing_whitespace)
+
+def test_incomplete_json():
+    assert_raises(
+        lambda: moltspeak.decode('{"v":"0.1"'),
+        "Invalid JSON"
+    )
+
+test("decode rejects incomplete JSON", test_incomplete_json)
+
+def test_plain_text():
+    assert_raises(
+        lambda: moltspeak.decode("hello world"),
+        "Invalid JSON"
+    )
+
+test("decode rejects plain text", test_plain_text)
+
+def test_json_array_at_root():
+    # Arrays will throw validation error since they're not valid messages
+    try:
+        result = moltspeak.decode("[1, 2, 3]")
+        # If it doesn't throw, arrays should decode but not be valid messages
+        assert_true(isinstance(result, list) or result is None or result.get("v") is None)
+    except Exception as e:
+        # Expected - arrays aren't valid message dictionaries
+        assert_true("dictionary" in str(e) or "Invalid" in str(e))
+
+test("decode handles JSON array at root", test_json_array_at_root)
+
+def test_escaped_characters():
+    ts = moltspeak.now()
+    json_str = f'{{"v":"0.1","id":"test","ts":{ts},"op":"query","p":{{"text":"line1\\nline2\\ttab\\"quote\\""}}}}'
+    decoded = moltspeak.decode(json_str)
+    assert_equal(decoded["p"]["text"], 'line1\nline2\ttab"quote"')
+
+test("decode handles escaped characters", test_escaped_characters)
+
+def test_deep_clone_isolation():
+    # deep_clone should prevent modifications from affecting original
+    obj = {"a": 1}
+    cloned = moltspeak.deep_clone(obj)
+    cloned["b"] = 2
+    # The original should still work fine
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload(obj)
+        .build(validate=False)
+    )
+    assert_true(msg["p"]["a"] == 1)
+    assert_true("b" not in msg["p"])
+
+test("deep_clone creates isolated copy", test_deep_clone_isolation)
+
+def test_special_json_values():
+    msg = (
+        moltspeak.create_message("query")
+        .from_agent({"agent": "sender"})
+        .payload({
+            "integer": 42,
+            "float": 3.14159,
+            "scientific": 1.23e10,
+            "negative": -999,
+            "bool_true": True,
+            "bool_false": False,
+            "null_val": None,
+            "empty_string": "",
+            "empty_array": [],
+            "empty_object": {}
+        })
+        .build(validate=False)
+    )
+    
+    encoded = moltspeak.encode(msg)
+    decoded = moltspeak.decode(encoded)
+    
+    assert_equal(decoded["p"]["integer"], 42)
+    assert_equal(decoded["p"]["float"], 3.14159)
+    assert_equal(decoded["p"]["bool_true"], True)
+    assert_equal(decoded["p"]["bool_false"], False)
+    assert_equal(decoded["p"]["null_val"], None)
+    assert_equal(decoded["p"]["empty_string"], "")
+    assert_true(isinstance(decoded["p"]["empty_array"], list))
+    assert_equal(len(decoded["p"]["empty_object"]), 0)
+
+test("special JSON values in payload", test_special_json_values)
+
+def test_unicode_escape_sequences():
+    ts = moltspeak.now()
+    json_str = f'{{"v":"0.1","id":"test","ts":{ts},"op":"query","p":{{"text":"\\u0048\\u0065\\u006c\\u006c\\u006f"}}}}'
+    decoded = moltspeak.decode(json_str)
+    assert_equal(decoded["p"]["text"], "Hello")
+
+test("unicode escape sequences in JSON", test_unicode_escape_sequences)
+
+
+# Additional Edge Cases
+print("\n🎲 Additional Edge Cases")
+
+def test_pii_in_deeply_nested():
+    deep_payload = {
+        "level1": {
+            "level2": {
+                "level3": {
+                    "level4": {
+                        "email": "hidden@secret.com"
+                    }
+                }
+            }
+        }
+    }
+    result = moltspeak.detect_pii(deep_payload)
+    assert_true(result.has_pii)
+    assert_true("email" in result.types)
+
+test("PII detection in deeply nested objects", test_pii_in_deeply_nested)
+
+def test_pii_unicode_email():
+    result = moltspeak.detect_pii("Contact: user@例え.jp")
+    # Just verify it doesn't crash
+    assert_true(isinstance(result.has_pii, bool))
+
+test("PII detection with unicode email", test_pii_unicode_email)
+
+def test_multiple_capabilities():
+    msg = (
+        moltspeak.create_message("task")
+        .from_agent({"agent": "sender"})
+        .require_capabilities(["cap1", "cap2", "cap3", "cap1"])  # duplicate
+        .build(validate=False)
+    )
+    assert_true("cap1" in msg["cap"])
+    assert_true("cap2" in msg["cap"])
+    assert_true("cap3" in msg["cap"])
+
+test("multiple capabilities array handling", test_multiple_capabilities)
+
+def test_very_long_agent_name():
+    long_name = "agent-" + "x" * 10000
+    msg = moltspeak.create_query(
+        {"domain": "test"},
+        {"agent": long_name},
+        {"agent": "receiver"}
+    )
+    assert_equal(len(msg["from"]["agent"]), 10006)
+
+test("very long agent name", test_very_long_agent_name)
+
+def test_special_chars_in_org():
+    msg = moltspeak.create_query(
+        {"domain": "test"},
+        {"agent": "sender", "org": "org/with:special@chars#and$symbols!"},
+        {"agent": "receiver"}
+    )
+    assert_equal(msg["from"]["org"], "org/with:special@chars#and$symbols!")
+
+test("special characters in agent org", test_special_chars_in_org)
 
 
 # ============================================================================

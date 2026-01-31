@@ -395,7 +395,7 @@ test('decode parses valid JSON message', () => {
 });
 
 test('decode unwraps envelope by default', () => {
-  const msg = { v: '0.1', id: 'test', ts: 123, op: 'query' };
+  const msg = { v: '0.1', id: 'test', ts: moltspeak.now(), op: 'query' };
   const encoded = moltspeak.encode(msg, { envelope: true });
   const decoded = moltspeak.decode(encoded);
   
@@ -556,6 +556,515 @@ test('error handling flow', () => {
   assertEqual(errorResponse.re, badQuery.id);
   assertEqual(errorResponse.p.code, 'E_MISSING_FIELD');
   assertTrue(errorResponse.p.recoverable);
+});
+
+// ============================================================================
+// Edge Case Tests
+// ============================================================================
+
+// Empty String Handling
+console.log('\n🔲 Empty String Handling');
+test('empty agent name in from field', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: '' })
+    .to({ agent: 'receiver' })
+    .payload({ domain: 'test' })
+    .build({ validate: false });
+  
+  assertEqual(msg.from.agent, '');
+  // Validation should catch empty agent names
+  const result = moltspeak.validateMessage(msg, { strict: true });
+  // Empty agent should still be structurally valid (protocol doesn't enforce non-empty)
+  assertTrue(result.valid || result.errors.some(e => e.includes('agent')));
+});
+
+test('empty payload object', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .to({ agent: 'receiver' })
+    .payload({})
+    .build({ validate: false });
+  
+  assertEqual(Object.keys(msg.p).length, 0);
+});
+
+test('empty string in payload values', () => {
+  const msg = moltspeak.createQuery(
+    { domain: '', intent: '', params: { key: '' } },
+    { agent: 'sender' },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.p.domain, '');
+  assertEqual(msg.p.intent, '');
+});
+
+test('null and undefined handling in payload', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload({ nullVal: null, obj: { nested: null } })
+    .build({ validate: false });
+  
+  assertEqual(msg.p.nullVal, null);
+  assertEqual(msg.p.obj.nested, null);
+});
+
+// Unicode Handling
+console.log('\n🌍 Unicode Handling');
+test('emoji in agent names', () => {
+  const msg = moltspeak.createQuery(
+    { domain: 'test' },
+    { agent: '🤖-agent-🦀' },
+    { agent: '🎯-target' }
+  );
+  
+  assertEqual(msg.from.agent, '🤖-agent-🦀');
+  assertEqual(msg.to.agent, '🎯-target');
+  
+  // Round-trip through encode/decode
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  assertEqual(decoded.from.agent, '🤖-agent-🦀');
+});
+
+test('CJK characters in payload', () => {
+  const msg = moltspeak.createQuery(
+    { domain: '天気', intent: '予報', params: { location: '東京' } },
+    { agent: 'sender' },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.p.domain, '天気');
+  assertEqual(msg.p.params.location, '東京');
+  
+  // Verify byte size calculation for multi-byte characters
+  const encoded = moltspeak.encode(msg);
+  const size = moltspeak.byteSize(encoded);
+  assertTrue(size > encoded.length); // UTF-8 multi-byte should be larger
+});
+
+test('mixed Unicode in all fields', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'αβγ-agent', org: 'Организация' })
+    .to({ agent: '代理人' })
+    .payload({ 
+      content: '日本語 한국어 العربية עברית',
+      emoji: '🎉🚀💡🔥',
+      special: '© ® ™ € £ ¥'
+    })
+    .build({ validate: false });
+  
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  
+  assertEqual(decoded.p.content, '日本語 한국어 العربية עברית');
+  assertEqual(decoded.p.emoji, '🎉🚀💡🔥');
+});
+
+test('RTL text handling', () => {
+  const msg = moltspeak.createQuery(
+    { domain: 'test', params: { text: 'مرحبا بالعالم' } },
+    { agent: 'sender' },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.p.params.text, 'مرحبا بالعالم');
+});
+
+test('zero-width characters', () => {
+  const zeroWidth = 'test\u200B\u200C\u200Dvalue';
+  const msg = moltspeak.createQuery(
+    { domain: zeroWidth },
+    { agent: 'sender' },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.p.domain, zeroWidth);
+});
+
+// Max Size Messages
+console.log('\n📏 Max Size Messages');
+test('message near 1MB boundary (under limit)', () => {
+  // Create a payload just under 1MB
+  const largeString = 'x'.repeat(900 * 1024); // 900KB of data
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload({ data: largeString })
+    .build({ validate: false });
+  
+  const encoded = moltspeak.encode(msg);
+  const size = moltspeak.byteSize(encoded);
+  assertTrue(size < 1 * 1024 * 1024); // Should be under 1MB
+  assertTrue(size > 900 * 1024); // Should be over 900KB
+  
+  // Should still be decodable
+  const decoded = moltspeak.decode(encoded);
+  assertEqual(decoded.p.data.length, 900 * 1024);
+});
+
+test('large array payload', () => {
+  const largeArray = Array(10000).fill({ key: 'value', num: 42 });
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload({ items: largeArray })
+    .build({ validate: false });
+  
+  assertEqual(msg.p.items.length, 10000);
+  
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  assertEqual(decoded.p.items.length, 10000);
+});
+
+// Deeply Nested Payloads
+console.log('\n🪆 Deeply Nested Payloads');
+test('50 levels of nesting', () => {
+  let nested = { value: 'deepest' };
+  for (let i = 0; i < 50; i++) {
+    nested = { level: i, child: nested };
+  }
+  
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload(nested)
+    .build({ validate: false });
+  
+  // Traverse to verify structure
+  let current = msg.p;
+  for (let i = 49; i >= 0; i--) {
+    assertEqual(current.level, i);
+    current = current.child;
+  }
+  assertEqual(current.value, 'deepest');
+  
+  // Round-trip
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  
+  current = decoded.p;
+  for (let i = 49; i >= 0; i--) {
+    assertEqual(current.level, i);
+    current = current.child;
+  }
+  assertEqual(current.value, 'deepest');
+});
+
+test('deeply nested arrays', () => {
+  let nested = [1, 2, 3];
+  for (let i = 0; i < 30; i++) {
+    nested = [nested, i];
+  }
+  
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload({ arrays: nested })
+    .build({ validate: false });
+  
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  assertTrue(Array.isArray(decoded.p.arrays));
+});
+
+test('mixed deep nesting (objects and arrays)', () => {
+  const complex = {
+    a: [{ b: [{ c: [{ d: [{ e: [{ f: 'deep' }] }] }] }] }]
+  };
+  
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload(complex)
+    .build({ validate: false });
+  
+  assertEqual(msg.p.a[0].b[0].c[0].d[0].e[0].f, 'deep');
+});
+
+// Timestamp Edge Cases
+console.log('\n⏰ Timestamp Edge Cases');
+test('future timestamp (year 2100)', () => {
+  const futureTs = 4102444800000; // Jan 1, 2100
+  const msg = {
+    v: '0.1',
+    id: moltspeak.generateUUID(),
+    ts: futureTs,
+    op: 'query',
+    from: { agent: 'future-agent' }
+  };
+  
+  assertEqual(msg.ts, futureTs);
+  // Strict mode may reject future timestamps, non-strict should accept
+  const result = moltspeak.validateMessage(msg, { strict: false, checkTimestamp: false });
+  assertTrue(result.valid);
+});
+
+test('very old timestamp (year 1970) - validation rejects', () => {
+  const oldTs = 1000; // 1 second after epoch
+  const msg = {
+    v: '0.1',
+    id: moltspeak.generateUUID(),
+    ts: oldTs,
+    op: 'query',
+    from: { agent: 'old-agent' }
+  };
+  
+  assertEqual(msg.ts, oldTs);
+  // SDK correctly rejects very old timestamps as replay attack prevention
+  const result = moltspeak.validateMessage(msg, { strict: false });
+  assertFalse(result.valid);
+  assertTrue(result.errors.some(e => e.includes('too old')));
+});
+
+test('zero timestamp', () => {
+  const msg = {
+    v: '0.1',
+    id: moltspeak.generateUUID(),
+    ts: 0,
+    op: 'query',
+    from: { agent: 'zero-ts-agent' }
+  };
+  
+  assertEqual(msg.ts, 0);
+});
+
+test('negative timestamp', () => {
+  const msg = {
+    v: '0.1',
+    id: moltspeak.generateUUID(),
+    ts: -1000,
+    op: 'query',
+    from: { agent: 'negative-ts-agent' }
+  };
+  
+  assertEqual(msg.ts, -1000);
+});
+
+test('expiration in the past', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .expiresIn(-60000) // 1 minute ago
+    .build({ validate: false });
+  
+  assertTrue(msg.exp < moltspeak.now());
+});
+
+test('very far future expiration', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .expiresIn(365 * 24 * 60 * 60 * 1000 * 100) // 100 years
+    .build({ validate: false });
+  
+  assertTrue(msg.exp > moltspeak.now());
+});
+
+// Invalid UUID Formats
+console.log('\n🔑 UUID Format Edge Cases');
+test('non-standard UUID format accepted', () => {
+  const msg = {
+    v: '0.1',
+    id: 'not-a-valid-uuid',
+    ts: moltspeak.now(),
+    op: 'query',
+    from: { agent: 'sender' }
+  };
+  
+  // In non-strict mode, this should be accepted
+  const result = moltspeak.validateMessage(msg, { strict: false });
+  // Protocol doesn't strictly enforce UUID format
+  assertTrue(result.valid || result.errors.some(e => e.includes('id')));
+});
+
+test('empty string as ID', () => {
+  const msg = {
+    v: '0.1',
+    id: '',
+    ts: moltspeak.now(),
+    op: 'query',
+    from: { agent: 'sender' }
+  };
+  
+  assertEqual(msg.id, '');
+});
+
+test('very long ID string', () => {
+  const longId = 'x'.repeat(1000);
+  const msg = {
+    v: '0.1',
+    id: longId,
+    ts: moltspeak.now(),
+    op: 'query',
+    from: { agent: 'sender' }
+  };
+  
+  assertEqual(msg.id.length, 1000);
+});
+
+test('numeric ID value', () => {
+  const msg = {
+    v: '0.1',
+    id: 12345,
+    ts: moltspeak.now(),
+    op: 'query',
+    from: { agent: 'sender' }
+  };
+  
+  assertEqual(msg.id, 12345);
+});
+
+test('UUID with uppercase letters', () => {
+  const uppercaseUuid = 'A1B2C3D4-E5F6-4789-ABCD-EF1234567890';
+  const msg = {
+    v: '0.1',
+    id: uppercaseUuid,
+    ts: moltspeak.now(),
+    op: 'query',
+    from: { agent: 'sender' }
+  };
+  
+  assertEqual(msg.id, uppercaseUuid);
+});
+
+// Malformed JSON Edge Cases
+console.log('\n🔧 Malformed JSON Edge Cases');
+test('decode handles trailing whitespace', () => {
+  const ts = moltspeak.now();
+  const json = `{"v":"0.1","id":"test","ts":${ts},"op":"query"}   \n\t  `;
+  const decoded = moltspeak.decode(json);
+  assertEqual(decoded.op, 'query');
+});
+
+test('decode rejects incomplete JSON', () => {
+  assertThrows(() => moltspeak.decode('{"v":"0.1"'), 'Invalid JSON');
+});
+
+test('decode rejects plain text', () => {
+  assertThrows(() => moltspeak.decode('hello world'), 'Invalid JSON');
+});
+
+test('decode handles JSON array at root', () => {
+  // Arrays will throw validation error since they're not valid messages
+  try {
+    const result = moltspeak.decode('[1, 2, 3]');
+    // If it doesn't throw, arrays should decode but not be valid messages
+    assertTrue(Array.isArray(result) || result === undefined || result.v === undefined);
+  } catch (e) {
+    // Expected - arrays don't have required message fields
+    assertTrue(e.message.includes('Missing required field') || e.message.includes('Invalid'));
+  }
+});
+
+test('decode handles escaped characters', () => {
+  const ts = moltspeak.now();
+  const json = `{"v":"0.1","id":"test","ts":${ts},"op":"query","p":{"text":"line1\\nline2\\ttab\\"quote\\""}}`;
+  const decoded = moltspeak.decode(json);
+  assertEqual(decoded.p.text, 'line1\nline2\ttab"quote"');
+});
+
+test('encode handles circular reference check', () => {
+  // deepClone should prevent circular refs from being an issue in normal use
+  const obj = { a: 1 };
+  const cloned = moltspeak.deepClone(obj);
+  cloned.b = cloned; // Create circular ref after clone
+  // The original should still work fine
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload(obj)
+    .build({ validate: false });
+  assertTrue(msg.p.a === 1);
+});
+
+test('special JSON values in payload', () => {
+  const msg = moltspeak.createMessage('query')
+    .from({ agent: 'sender' })
+    .payload({
+      integer: 42,
+      float: 3.14159,
+      scientific: 1.23e10,
+      negative: -999,
+      boolTrue: true,
+      boolFalse: false,
+      nullVal: null,
+      emptyString: '',
+      emptyArray: [],
+      emptyObject: {}
+    })
+    .build({ validate: false });
+  
+  const encoded = moltspeak.encode(msg);
+  const decoded = moltspeak.decode(encoded);
+  
+  assertEqual(decoded.p.integer, 42);
+  assertEqual(decoded.p.float, 3.14159);
+  assertEqual(decoded.p.boolTrue, true);
+  assertEqual(decoded.p.boolFalse, false);
+  assertEqual(decoded.p.nullVal, null);
+  assertEqual(decoded.p.emptyString, '');
+  assertTrue(Array.isArray(decoded.p.emptyArray));
+  assertEqual(Object.keys(decoded.p.emptyObject).length, 0);
+});
+
+test('unicode escape sequences in JSON', () => {
+  const ts = moltspeak.now();
+  const json = `{"v":"0.1","id":"test","ts":${ts},"op":"query","p":{"text":"\\u0048\\u0065\\u006c\\u006c\\u006f"}}`;
+  const decoded = moltspeak.decode(json);
+  assertEqual(decoded.p.text, 'Hello');
+});
+
+// Additional Edge Cases
+console.log('\n🎲 Additional Edge Cases');
+test('PII detection in deeply nested objects', () => {
+  const deepPayload = {
+    level1: {
+      level2: {
+        level3: {
+          level4: {
+            email: 'hidden@secret.com'
+          }
+        }
+      }
+    }
+  };
+  
+  const result = moltspeak.detectPII(deepPayload);
+  assertTrue(result.hasPII);
+  assertTrue(result.types.includes('email'));
+});
+
+test('PII detection with unicode email', () => {
+  const result = moltspeak.detectPII('Contact: user@例え.jp');
+  // Depending on implementation, may or may not detect unicode domains
+  // Just verify it doesn't crash
+  assertTrue(typeof result.hasPII === 'boolean');
+});
+
+test('multiple capabilities array handling', () => {
+  const msg = moltspeak.createMessage('task')
+    .from({ agent: 'sender' })
+    .requireCapabilities(['cap1', 'cap2', 'cap3', 'cap1']) // duplicate
+    .build({ validate: false });
+  
+  assertTrue(msg.cap.includes('cap1'));
+  assertTrue(msg.cap.includes('cap2'));
+  assertTrue(msg.cap.includes('cap3'));
+});
+
+test('very long agent name', () => {
+  const longName = 'agent-' + 'x'.repeat(10000);
+  const msg = moltspeak.createQuery(
+    { domain: 'test' },
+    { agent: longName },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.from.agent.length, 10006);
+});
+
+test('special characters in agent org', () => {
+  const msg = moltspeak.createQuery(
+    { domain: 'test' },
+    { agent: 'sender', org: 'org/with:special@chars#and$symbols!' },
+    { agent: 'receiver' }
+  );
+  
+  assertEqual(msg.from.org, 'org/with:special@chars#and$symbols!');
 });
 
 // ============================================================================

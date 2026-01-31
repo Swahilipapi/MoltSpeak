@@ -284,6 +284,16 @@ def validate_message(
         elif message["ts"] < 0:
             result.valid = False
             result.errors.append("Timestamp (ts) must be positive")
+        else:
+            # Check message age (prevent replay attacks)
+            MAX_AGE_MS = 5 * 60 * 1000  # 5 minutes
+            message_age = now() - message["ts"]
+            if message_age > MAX_AGE_MS:
+                result.valid = False
+                result.errors.append(
+                    f"Message timestamp too old: {message_age / 1000:.1f}s ago "
+                    f"(max allowed: {MAX_AGE_MS / 1000}s). Possible replay attack."
+                )
     
     # ID format check
     if "id" in message and isinstance(message["id"], str):
