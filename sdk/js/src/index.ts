@@ -36,7 +36,11 @@ export {
   SignatureError,
   CapabilityError,
   ConsentError,
+  PIIError,
   RateLimitError,
+  TimeoutError,
+  AuthenticationError,
+  ProtocolError,
 } from './errors';
 export type {
   AgentRef,
