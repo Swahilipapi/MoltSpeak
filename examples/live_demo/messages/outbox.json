@@ -1,0 +1,23 @@
+{
+  "v": "0.1",
+  "id": "183aab39-0fcf-469c-94ae-f2616eaa7399",
+  "ts": 1769859235714,
+  "op": "query",
+  "cls": "int",
+  "from": {
+    "agent": "alice-weather-bot",
+    "org": "demo-corp"
+  },
+  "to": {
+    "agent": "bob-weather-service",
+    "org": "weather-inc"
+  },
+  "p": {
+    "domain": "weather",
+    "intent": "current",
+    "params": {
+      "location": "Amsterdam",
+      "units": "celsius"
+    }
+  }
+}

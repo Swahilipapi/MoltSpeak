@@ -1,0 +1,32 @@
+{
+  "v": "0.1",
+  "id": "e0d5f3dc-fdff-4353-9a0c-ab46c4cd790c",
+  "ts": 1769859235814,
+  "op": "respond",
+  "cls": "int",
+  "from": {
+    "agent": "bob-weather-service",
+    "org": "weather-inc"
+  },
+  "to": {
+    "agent": "alice-weather-bot",
+    "org": "demo-corp"
+  },
+  "re": "183aab39-0fcf-469c-94ae-f2616eaa7399",
+  "p": {
+    "status": "success",
+    "data": {
+      "location": "Amsterdam",
+      "temperature": 18,
+      "units": "celsius",
+      "conditions": "Partly cloudy",
+      "humidity": 65,
+      "wind": {
+        "speed": 12,
+        "direction": "SW"
+      },
+      "forecast": "Light rain expected in the evening"
+    }
+  },
+  "sig": "ed25519:ImludCJ8eyJhZ2VudCI6ImJvYi13ZWF0aGVyLXNlcnZpY2UiLCJvcmciOiJ3ZWF0"
+}
