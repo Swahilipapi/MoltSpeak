@@ -61,7 +61,7 @@ MoltID delegations use a token format inspired by [UCANs](https://ucan.xyz/) (Us
 
 ```json
 {
-  "@context": "https://moltspeak.dev/ns/delegation/v1",
+  "@context": "https://www.moltspeak.xyz/ns/delegation/v1",
   "type": "MoltDelegation",
   "version": "1.0",
   

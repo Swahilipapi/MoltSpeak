@@ -40,7 +40,7 @@ The following behaviors are not tolerated:
 
 ### Enforcement
 
-Violations may be reported to the maintainers at [conduct@moltspeak.dev]. All reports will be reviewed and investigated. Maintainers have the right to remove, edit, or reject contributions that violate this code of conduct.
+Violations may be reported to the maintainers at [conduct@www.moltspeak.xyz]. All reports will be reviewed and investigated. Maintainers have the right to remove, edit, or reject contributions that violate this code of conduct.
 
 ---
 
@@ -84,7 +84,7 @@ cd moltspeak
 ### 2. Set Up Upstream Remote
 
 ```bash
-git remote add upstream https://github.com/moltspeak/moltspeak.git
+git remote add upstream https://github.com/Swahilipapi/MoltSpeak.git
 git fetch upstream
 ```
 
@@ -347,7 +347,7 @@ Steps to reproduce the behavior:
 
 ⚠️ **Do NOT report security vulnerabilities publicly!**
 
-Email security@moltspeak.dev with:
+Email security@www.moltspeak.xyz with:
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact
@@ -590,7 +590,7 @@ python tests/conformance/run.py --sdk javascript
 ### GitHub Discussions
 
 For questions, ideas, and general discussion:
-- [Discussions](https://github.com/moltspeak/moltspeak/discussions)
+- [Discussions](https://github.com/Swahilipapi/MoltSpeak/discussions)
 
 **Categories:**
 - **Q&A** - Get help with MoltSpeak
@@ -619,7 +619,7 @@ Weekly community calls (schedule TBD):
 ### Mailing List
 
 For low-frequency announcements:
-- [announce@moltspeak.dev](mailto:announce@moltspeak.dev) *(placeholder)*
+- [announce@www.moltspeak.xyz](mailto:announce@www.moltspeak.xyz) *(placeholder)*
 
 ---
 

@@ -355,7 +355,7 @@ When agent needs approval:
     "amount": 600000000,
     "to": "agent:expensive-service@provider",
     "reason": "Premium API access for research task",
-    "approval_url": "https://moltspeak.dev/approve/apr_abc123",
+    "approval_url": "https://www.moltspeak.xyz/approve/apr_abc123",
     "expires": 1703283600000
   }
 }
@@ -444,7 +444,7 @@ Automatic holds on:
     "hold_expires": 1703366400000,
     "resolution": {
       "options": ["verify_identity", "wait_24h", "contact_support"],
-      "url": "https://moltspeak.dev/verify"
+      "url": "https://www.moltspeak.xyz/verify"
     }
   }
 }

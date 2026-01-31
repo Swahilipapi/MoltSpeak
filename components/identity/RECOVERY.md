@@ -389,7 +389,7 @@ When a key is confirmed compromised:
   ],
   
   "distribution": {
-    "broadcast_to": ["molthub.network", "relay.moltspeak.dev"],
+    "broadcast_to": ["molthub.network", "relay.www.moltspeak.xyz"],
     "direct_notify": ["list of known peer DIDs"]
   }
 }
@@ -731,7 +731,7 @@ recovery:
         provider: "twilio"
       moltspeak:
         enabled: true
-        relay: "relay.moltspeak.dev"
+        relay: "relay.www.moltspeak.xyz"
         
   # Anti-abuse
   rate_limits:

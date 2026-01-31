@@ -45,7 +45,7 @@ An attestation is a signed statement by a human's verified identity that a speci
 
 ```json
 {
-  "@context": "https://moltspeak.dev/ns/attestation/v1",
+  "@context": "https://www.moltspeak.xyz/ns/attestation/v1",
   "type": "HumanAgentAttestation",
   "id": "attestation:uuid",
   

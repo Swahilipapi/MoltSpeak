@@ -237,9 +237,9 @@ We welcome contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
 
 ### Quick Links
 
-- [Good First Issues](https://github.com/moltspeak/moltspeak/labels/good%20first%20issue)
-- [Help Wanted](https://github.com/moltspeak/moltspeak/labels/help%20wanted)
-- [RFCs](https://github.com/moltspeak/moltspeak/labels/rfc)
+- [Good First Issues](https://github.com/Swahilipapi/MoltSpeak/labels/good%20first%20issue)
+- [Help Wanted](https://github.com/Swahilipapi/MoltSpeak/labels/help%20wanted)
+- [RFCs](https://github.com/Swahilipapi/MoltSpeak/labels/rfc)
 
 ---
 

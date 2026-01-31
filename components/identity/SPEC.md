@@ -77,7 +77,7 @@ Every MoltID resolves to a DID Document:
 {
   "@context": [
     "https://www.w3.org/ns/did/v1",
-    "https://moltspeak.dev/ns/moltid/v1"
+    "https://www.moltspeak.xyz/ns/moltid/v1"
   ],
   "id": "did:molt:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
   "controller": "did:molt:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",

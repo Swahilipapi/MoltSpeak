@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://moltspeak.dev/schemas/moltspeak-v0.1.json",
+  "$id": "https://www.moltspeak.xyz/schemas/moltspeak-v0.1.json",
   "title": "MoltSpeak Message",
   "description": "Schema for MoltSpeak protocol messages v0.1",
   "type": "object",

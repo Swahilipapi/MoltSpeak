@@ -10,7 +10,7 @@ setup(
     long_description=open("README.md").read() if __name__ != "__main__" else "",
     long_description_content_type="text/markdown",
     author="MoltSpeak Contributors",
-    url="https://github.com/moltspeak/moltspeak-python",
+    url="https://github.com/Swahilipapi/MoltSpeak",
     packages=find_packages(),
     python_requires=">=3.8",
     install_requires=[
